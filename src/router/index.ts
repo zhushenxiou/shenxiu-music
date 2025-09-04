@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Discover from '@/pages/Discover/index.vue'
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     //重定向：在项目运行的时候，立马定向到发现音乐页面，否则页面可能不展示内容或者展示非路由组件的内容
     {

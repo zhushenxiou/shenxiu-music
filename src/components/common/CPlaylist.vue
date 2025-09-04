@@ -17,8 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 const router = useRouter()
 const { playlists, type } = defineProps(['playlists', 'type'])
 
@@ -26,7 +26,7 @@ function toDetailsPage(id: number) {
   // 传入album跳转albumDetails，否则都跳转playlistDetails
   router.push({
     name: type == 'album' ? 'albumDetails' : 'playlistDetails',
-    params: { id }
+    params: { id },
   })
 }
 </script>
@@ -49,6 +49,7 @@ function toDetailsPage(id: number) {
     .el-image {
       width: 100%;
       min-height: 10rem;
+      max-height: 12rem;
       border-radius: 1rem;
     }
 

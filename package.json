@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "deploy": "npm run build && node ./scripts/deploy.js",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
@@ -16,6 +17,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.8.3",
     "element-plus": "^2.9.6",
+    "node-ssh": "^13.2.1",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
