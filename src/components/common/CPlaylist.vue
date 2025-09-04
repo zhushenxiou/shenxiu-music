@@ -48,8 +48,8 @@ function toDetailsPage(id: number) {
 
     .el-image {
       width: 100%;
-      min-height: 10rem;
-      max-height: 12rem;
+      min-height: 12rem;
+      max-height: 16rem;
       border-radius: 1rem;
     }
 
