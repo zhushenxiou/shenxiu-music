@@ -56,8 +56,9 @@ let checkTimer: number | undefined = undefined
 
 //二维码登录
 async function toQRCodeLogin() {
-  // 先生成二维码
+  // 先生成二维码key值
   const key = await getQRCodeKey()
+  // 通过key获取二维码的 base64 编码
   await getQRCodeBase(key)
   // 防抖,如果定时器存在，则先清除定时器
   if (checkTimer) {
@@ -113,7 +114,7 @@ async function checkQRCodeState(key: string) {
       // 刷新页面
       router.go(0)
     }
-    // 将获取到的 cookie 保存在 sessionStorage 中
+    // 将获取到的 cookie 保存在 localStorage 中
     localStorage.setItem('cookie', res.cookie)
     // 储存新的状态码状态码和状态值
     QRCodeStateCode.value = res.code

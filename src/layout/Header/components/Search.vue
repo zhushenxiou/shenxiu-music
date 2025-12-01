@@ -5,13 +5,23 @@
     <el-popover placement="bottom" width="18rem" trigger="click">
       <template #reference>
         <!-- 搜索框 -->
-        <el-input class="search-input" placeholder="请输入内容" :prefix-icon="Search" v-model.trim="keywords"
-          @keyup.enter="toSearch"></el-input>
+        <el-input
+          class="search-input"
+          placeholder="请输入内容"
+          :prefix-icon="Search"
+          v-model.trim="keywords"
+          @input="toSearch"
+        ></el-input>
       </template>
       <!-- 热搜列表 -->
       <div class="hotsearch">
         <div class="title">热搜榜</div>
-        <div class="item" v-for="(item, index) in hotSearch" @click="goHotSearch(item.searchWord)" :key="index">
+        <div
+          class="item"
+          v-for="(item, index) in hotSearch"
+          @click="goHotSearch(item.searchWord)"
+          :key="index"
+        >
           <div class="index">{{ index + 1 }}</div>
           <div class="searchWord">{{ item.searchWord }}</div>
         </div>
@@ -23,20 +33,17 @@
 <script setup lang="ts">
 import { hotSearchApi } from '@/api/search'
 import router from '@/router'
-import { ElMessage } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
+import { debounce } from 'lodash-es'
 
 /**
  * 搜索
  */
 const keywords = ref('')
-
-function toSearch() {
-  // 将当前搜索框中的关键字保存在 session 中
-  // TODO 做建议搜索
-  sessionStorage.setItem('keywords', keywords.value)
-  // 判断，如果当关键字不为空串时才能进行搜索，否则进行提示
+// 搜索函数，使用防抖处理，避免频繁请求
+const toSearch = debounce(function () {
+  // 判断，如果当关键字不为空串时才能进行搜索
   if (keywords.value) {
     // 跳转页面，并传递搜索的关键词
     router.push({
@@ -45,17 +52,16 @@ function toSearch() {
         keywords: keywords.value,
       },
     })
-  } else {
-    ElMessage.warning('请输入有效的搜索关键字 ！')
   }
-}
+}, 800)
 
-const hotSearch = ref<{ searchWord: string; }[]>()
+const hotSearch = ref<{ searchWord: string }[]>()
 // 热搜榜单
 async function getHotSearch() {
   const res = await hotSearchApi()
   hotSearch.value = res.data
 }
+
 // 跳转热搜
 function goHotSearch(searchWord: string) {
   router.push({
@@ -70,7 +76,6 @@ onMounted(() => {
   // 获取热搜榜单
   getHotSearch()
 })
-
 </script>
 
 <style lang="less" scoped>
@@ -114,24 +119,17 @@ onMounted(() => {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     border: none;
     overflow: hidden;
-
-    &[data-popper-placement^=bottom] {
-      margin-top: 10px;
-    }
   }
 }
 
-// 热搜榜样式优化
+// 热搜榜样式
 .hotsearch {
   height: 360px;
   padding: 12px 0;
   background: #fff;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   .title {
-    position: sticky;
-    top: 0;
-    background: linear-gradient(180deg, #fff 85%, rgba(255, 255, 255, 0));
     padding: 0 16px 12px;
     margin: 0 0 8px;
     font-size: 18px;
@@ -146,12 +144,11 @@ onMounted(() => {
     padding: 10px 20px;
     margin: 0 8px;
     border-radius: 8px;
-    transition: all 0.2s ease;
     gap: 12px;
+    cursor: pointer;
 
     &:hover {
       background: #f8f9fa;
-      transform: translateX(4px);
     }
 
     .index {
@@ -159,10 +156,11 @@ onMounted(() => {
       text-align: center;
       font-weight: 600;
       color: #666;
+    }
 
-      &:nth-child(-n+3) {
-        color: #ff3a3a;
-      }
+    // 前三名特殊样式
+    &:nth-child(-n + 3) .index {
+      color: #ff3a3a;
     }
 
     .searchWord {
@@ -170,41 +168,6 @@ onMounted(() => {
       font-size: 14px;
       color: #333;
       font-weight: 500;
-      position: relative;
-
-      &::after {
-        content: attr(data-content);
-        position: absolute;
-        right: 0;
-        color: #999;
-        font-size: 12px;
-        opacity: 0;
-        transition: opacity 0.2s;
-      }
-    }
-
-    &:hover .searchWord::after {
-      content: "点击搜索";
-      opacity: 1;
-    }
-  }
-
-  /* 自定义滚动条 */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.3);
     }
   }
 }

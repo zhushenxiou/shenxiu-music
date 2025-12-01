@@ -73,9 +73,10 @@ const route = useRoute()
 
   // 可滚动主内容
   .scrollable-main {
-    height: calc(100vh - 120px); // 总高度减去头部和底部
+    height: calc(100vh - 130px); // 总高度减去头部(60px)和底部(70px)
     overflow-y: auto;
     padding: 16px;
+    padding-bottom: 80px; // 额外增加底部内边距，确保内容不被底部播放器遮挡
     margin: 0;
     width: 100%;
     background: #f7f9fc;
@@ -87,7 +88,7 @@ const route = useRoute()
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 70px;
     z-index: 1000;
     padding: 0;
   }
