@@ -58,7 +58,7 @@ const store = usePlayerStore()
   position: fixed;
   bottom: 0;
   border-top: 1px solid #eee;
-  background-color: #fff;
+  background-color: #fafafa;
   z-index: 9999 !important;
   padding: 0.5rem 1rem;
   cursor: default;

@@ -82,31 +82,28 @@ onMounted(() => {
   :deep(.search-input) {
     .el-input__wrapper {
       border-radius: 20px;
-      background: linear-gradient(145deg, #ff6060, #e13e3e);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+      background-color: #f7f9fc;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
       padding: 0 15px;
 
       &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      &.is-focus {
-        background: linear-gradient(145deg, #ff7070, #f15050);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        border-color: #d1d5db;
       }
 
       input {
-        color: #fff;
-        font-weight: 500;
+        color: #333;
         height: 36px;
 
         &::placeholder {
-          color: rgba(255, 255, 255, 0.8);
+          color: #9ca3af;
         }
       }
 
       .el-input__prefix {
-        color: rgba(255, 255, 255, 0.9);
+        color: #6b7280;
         margin-right: 8px;
       }
     }

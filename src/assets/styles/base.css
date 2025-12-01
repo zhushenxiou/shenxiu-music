@@ -1,3 +1,4 @@
+@import './var.css';
 /* 全局重置样式 */
 * {
   margin: 0;
@@ -5,9 +6,9 @@
   box-sizing: border-box;
 }
 
-@tailwindcss base;
-@tailwindcss components;
-@tailwindcss utilities;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 li {
   list-style: none;

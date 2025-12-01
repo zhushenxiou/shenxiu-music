@@ -123,7 +123,7 @@ getAccountInfo()
     }
 
     span {
-      color: white;
+      color: black;
       font-family: '等线';
       font-size: 15px;
     }
@@ -137,7 +137,7 @@ getAccountInfo()
     margin: 0 20px;
 
     .el-button {
-      background-color: #e13e3e;
+      background-color: #eee;
       color: white;
       border: 0;
     }

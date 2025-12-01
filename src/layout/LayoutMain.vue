@@ -1,16 +1,16 @@
 <template>
   <el-container class="layout">
-    <!-- 固定头部 -->
-    <el-header class="fixed-header">
-      <Header />
-    </el-header>
+    <!-- 固定侧边栏 -->
+    <el-aside class="fixed-aside">
+      <Aside />
+    </el-aside>
 
-    <!-- 主体容器 -->
-    <el-container class="main-container">
-      <!-- 固定侧边栏 -->
-      <el-aside class="fixed-aside">
-        <Aside />
-      </el-aside>
+    <!-- 右侧内容区域 -->
+    <el-container class="right-container">
+      <!-- 固定头部 -->
+      <el-header class="fixed-header">
+        <Header />
+      </el-header>
 
       <!-- 可滚动主内容 -->
       <el-main class="scrollable-main">
@@ -43,43 +43,42 @@ const route = useRoute()
 
 <style lang="less">
 .layout {
-  // 固定头部样式
-  .fixed-header {
+  // 固定侧边栏
+  .fixed-aside {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 10rem;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1001;
+  }
+
+  // 右侧内容区域
+  .right-container {
+    margin-left: 10rem; // 避开侧边栏
+    width: calc(100% - 10rem);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 固定头部样式
+  .fixed-header {
+    position: static;
     height: 60px;
     z-index: 1000; // 确保在最上层
     padding: 0;
   }
 
-  // 主体容器（避开头部和底部）
-  .main-container {
-    margin-top: 60px; // 避开头部
-    margin-bottom: 60px; // 避开底部播放器
-    width: 100%;
-    height: calc(100vh - 120px); // 总高度减去头尾
-  }
-
-  // 固定侧边栏
-  .fixed-aside {
-    position: fixed;
-    top: 60px; // 位于头部下方
-    left: 0;
-    width: 10rem;
-    height: calc(100vh - 120px); // 高度减去头尾
-    overflow-y: auto;
-    z-index: 999;
-  }
-
   // 可滚动主内容
   .scrollable-main {
-    margin-left: 10rem; // 避开侧边栏
-    width: calc(100% - 10rem);
-    height: 100%;
+    height: calc(100vh - 120px); // 总高度减去头部和底部
     overflow-y: auto;
     padding: 16px;
+    margin: 0;
+    width: 100%;
+    background: #f7f9fc;
   }
 
   // 固定底部

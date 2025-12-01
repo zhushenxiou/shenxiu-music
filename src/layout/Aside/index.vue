@@ -1,28 +1,48 @@
 <template>
-  <!-- 菜单组件 -->
-  <el-menu :default-active="activeMenu" bg-color="red">
-    <el-menu-item v-for="menu of menus" :key="menu.name" :index="menu.path" @click="selectMenu(menu)">
-      <!-- {{}}和v-text都是文本，v-html才是标签 -->
-      <i class="iconfont" v-html="menu.icon"></i>
-      <span>{{ menu.label }}</span>
-    </el-menu-item>
-    <el-menu-item-group title="创建的歌单" v-show="userStore.createdPlaylist.length">
-      <el-menu-item v-for="(playlist, index) in userStore.createdPlaylist" :index="`/playlistDetails/${playlist.id}`"
-        @click=" toPlaylistDetails(playlist.id)" :key="index">
-        <i class="iconfont">&#xe80f;</i>
-        {{ (index == 0 ? "我喜欢的音乐" : playlist.name.slice(0, 5)) }}
-        <span v-if="playlist.name.length >= 5 && index != 0">...</span>
+  <aside>
+    <!-- logo -->
+     <div class="bg-white flex items-center justify-center h-[60px]">
+       <span class="text-lg text-center font-bold">神秀云音乐</span>
+     </div>
+    <!-- 菜单组件 -->
+    <el-menu :default-active="activeMenu" bg-color="red">
+      <el-menu-item
+        v-for="menu of menus"
+        :key="menu.name"
+        :index="menu.path"
+        @click="selectMenu(menu)"
+      >
+        <!-- 图标 -->
+        <i class="iconfont" v-html="menu.icon"></i>
+        <!-- 菜单文字 -->
+        <span>{{ menu.label }}</span>
       </el-menu-item>
-    </el-menu-item-group>
-    <el-menu-item-group title="收藏的歌单" v-show="userStore.subscribedPlaylist.length">
-      <el-menu-item v-for="playlist, index in userStore.subscribedPlaylist" :index="`/playlistDetails/${playlist.id}`"
-        @click="toPlaylistDetails(playlist.id)" :key="index">
-        <i class="iconfont">&#xe80f;</i>
-        {{ playlist.name.slice(0, 5) }}
-        <span v-if="playlist.name.length >= 5">...</span>
-      </el-menu-item>
-    </el-menu-item-group>
-  </el-menu>
+      <el-menu-item-group title="创建的歌单" v-show="userStore.createdPlaylist.length">
+        <el-menu-item
+          v-for="(playlist, index) in userStore.createdPlaylist"
+          :index="`/playlistDetails/${playlist.id}`"
+          @click="toPlaylistDetails(playlist.id)"
+          :key="index"
+        >
+          <i class="iconfont">&#xe80f;</i>
+          {{ index == 0 ? '我喜欢的音乐' : playlist.name.slice(0, 5) }}
+          <span v-if="playlist.name.length >= 5 && index != 0">...</span>
+        </el-menu-item>
+      </el-menu-item-group>
+      <el-menu-item-group title="收藏的歌单" v-show="userStore.subscribedPlaylist.length">
+        <el-menu-item
+          v-for="(playlist, index) in userStore.subscribedPlaylist"
+          :index="`/playlistDetails/${playlist.id}`"
+          @click="toPlaylistDetails(playlist.id)"
+          :key="index"
+        >
+          <i class="iconfont">&#xe80f;</i>
+          {{ playlist.name.slice(0, 5) }}
+          <span v-if="playlist.name.length >= 5">...</span>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-menu>
+  </aside>
 </template>
 
 <script setup lang="ts">
@@ -48,16 +68,18 @@ const activeMenu = computed(() => {
   return route.path // 直接返回当前路由路径
 })
 
-function selectMenu(menu: { path: string, name: string }) {
-  if ((menu.name == 'myMusic' || menu.name == 'dailyRecommend')
-    && !localStorage.getItem('cookie')) {
+function selectMenu(menu: { path: string; name: string }) {
+  if (
+    (menu.name == 'myMusic' || menu.name == 'dailyRecommend') &&
+    !localStorage.getItem('cookie')
+  ) {
     ElMessage.warning('该页面需要登录才能访问')
-    return;
+    return
   }
   // 登录用户的个人用户详情页
   if (menu.name == 'myMusic' && localStorage.getItem('cookie')) {
     router.push(menu.path + '/' + userStore.userInfo.userId)
-    return;
+    return
   }
   // 其他跳转
   router.push(menu.path)
@@ -66,42 +88,38 @@ function selectMenu(menu: { path: string, name: string }) {
 function toPlaylistDetails(id: number) {
   router.push({
     name: 'playlistDetails',
-    params: { id }
+    params: { id },
   })
 }
 </script>
 
 <style lang="less">
-@menu-primary-color: #e13e3e; // 主色调
-@text-primary: #333; // 主要文字颜色
-@text-secondary: #666; // 次级文字颜色
-@hover-bg: #f5f5f5; // 悬停背景
-@transition-duration: 0.3s; // 过渡动画时长
+// 简化的样式变量
+@menu-primary-color: #e13e3e;
+@text-primary: #333;
+@text-secondary: #666;
+@hover-bg: #f5f5f5;
 
 .el-menu {
   width: 100%;
-  // height: 100%;
   height: calc(100vh - 120px);
   overflow-y: scroll;
   background-color: #fff !important;
   border-right: none !important;
 
-  // 统一菜单项样式
   .el-menu-item {
     height: 48px;
     line-height: 48px;
     color: @text-primary;
-    transition: all @transition-duration ease;
+    transition: all 0.3s ease;
 
     i {
       margin-right: 12px;
       font-size: 18px;
-      vertical-align: middle;
     }
 
     span {
       font-size: 14px;
-      vertical-align: middle;
     }
 
     &:hover {
@@ -109,11 +127,11 @@ function toPlaylistDetails(id: number) {
       padding-left: 12px !important;
     }
 
-    // 激活状态样式
     &.is-active {
       color: @menu-primary-color !important;
-      background: lighten(@menu-primary-color, 40%);
+      background: #fde2e2;
       font-weight: 500;
+      position: relative;
 
       &::after {
         content: '';
@@ -128,7 +146,6 @@ function toPlaylistDetails(id: number) {
     }
   }
 
-  // 歌单分组样式
   .el-menu-item-group {
     margin: 16px 0;
 
@@ -137,8 +154,6 @@ function toPlaylistDetails(id: number) {
       color: @text-secondary;
       font-size: 12px;
       font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .el-menu-item {
@@ -147,17 +162,14 @@ function toPlaylistDetails(id: number) {
       font-size: 13px;
       color: @text-secondary;
 
-      // 歌单名称截断
       span:first-child {
         display: inline-block;
         max-width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        vertical-align: bottom;
       }
 
-      // 移除默认激活样式
       &.is-active {
         background: transparent;
 
