@@ -31,9 +31,6 @@
         <img src="./img/waitConfirm.png" v-show="QRCodeStateCode === 802" alt="" />
       </div>
     </div>
-
-    <!-- 其他登录方式 -->
-    <!-- 咱不考虑 -->
   </div>
 </template>
 

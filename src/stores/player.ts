@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { songUrlApi, lyricApi } from '@/api/song'
-// import { songCommentApi } from '@/api/comment'
 
 export const usePlayerStore = defineStore('player', {
   state: () => {

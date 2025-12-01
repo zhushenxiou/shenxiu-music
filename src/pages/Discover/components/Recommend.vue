@@ -2,7 +2,7 @@
   <div class="recommend" v-loading="isLoading">
     <!-- 轮播图 -->
     <div class="banner">
-      <el-carousel :interval="4000" type="card" height="14rem" v-if="banners">
+      <el-carousel :interval="4000" type="card" height="400px" v-if="banners">
         <el-carousel-item v-for="(banner, index) in banners" :key="index">
           <img :src="banner.imageUrl" alt="" @click="handleBanner(banner)" />
         </el-carousel-item>
