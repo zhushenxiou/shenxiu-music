@@ -12,7 +12,7 @@ if (isDevelopment) {
   url = '/api'
 } else {
   // 生产环境
-  url = 'http://117.72.189.56:4000/'
+  url = 'http://localhost:3001/'
 }
 
 const requests = axios.create({
