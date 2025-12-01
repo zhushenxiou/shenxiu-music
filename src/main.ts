@@ -1,9 +1,9 @@
-// element-plus 暗黑模式
-import 'element-plus/theme-chalk/dark/css-vars.css'
 //element-plus icon
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // element-plus ElMessage
 import 'element-plus/theme-chalk/index.css'
+// 全局引入base.css
+import '@/assets/styles/base.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
