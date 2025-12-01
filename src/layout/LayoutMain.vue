@@ -48,16 +48,16 @@ const route = useRoute()
     position: fixed;
     top: 0;
     left: 0;
-    width: 10rem;
+    width: 12rem;
     height: 100vh;
     overflow-y: auto;
-    z-index: 1001;
+    z-index: 1000;
   }
 
   // 右侧内容区域
   .right-container {
-    margin-left: 10rem; // 避开侧边栏
-    width: calc(100% - 10rem);
+    margin-left: 12rem; // 避开侧边栏
+    width: calc(100% - 12rem);
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -67,7 +67,7 @@ const route = useRoute()
   .fixed-header {
     position: static;
     height: 60px;
-    z-index: 1000; // 确保在最上层
+    z-index: 1000;
     padding: 0;
   }
 

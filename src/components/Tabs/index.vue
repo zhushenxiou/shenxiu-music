@@ -59,7 +59,7 @@ function handleClick(tab: any) {
       }
 
       &::after {
-        background-color: white;
+        background-color: var(--main-bg-color);
       }
     }
   }

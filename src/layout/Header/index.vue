@@ -31,9 +31,8 @@ header {
   width: 100%;
   display: flex;
   align-items: center;
-  background: #f7f9fc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  padding: 0 20px;
+  background: var(--header-bg-color);
+  padding: 0 40px;
   position: relative;
   z-index: 1000;
 

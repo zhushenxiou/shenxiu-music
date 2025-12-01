@@ -1,11 +1,11 @@
 <template>
-  <aside>
+  <aside class="w-full h-full bg-[--aside-bg-color]">
     <!-- logo -->
-     <div class="bg-white flex items-center justify-center h-[60px]">
+     <div class="flex items-center justify-center h-[60px]">
        <span class="text-lg text-center font-bold">神秀云音乐</span>
      </div>
     <!-- 菜单组件 -->
-    <el-menu :default-active="activeMenu" bg-color="red">
+    <el-menu :default-active="activeMenu">
       <el-menu-item
         v-for="menu of menus"
         :key="menu.name"
@@ -17,30 +17,6 @@
         <!-- 菜单文字 -->
         <span>{{ menu.label }}</span>
       </el-menu-item>
-      <el-menu-item-group title="创建的歌单" v-show="userStore.createdPlaylist.length">
-        <el-menu-item
-          v-for="(playlist, index) in userStore.createdPlaylist"
-          :index="`/playlistDetails/${playlist.id}`"
-          @click="toPlaylistDetails(playlist.id)"
-          :key="index"
-        >
-          <i class="iconfont">&#xe80f;</i>
-          {{ index == 0 ? '我喜欢的音乐' : playlist.name.slice(0, 5) }}
-          <span v-if="playlist.name.length >= 5 && index != 0">...</span>
-        </el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="收藏的歌单" v-show="userStore.subscribedPlaylist.length">
-        <el-menu-item
-          v-for="(playlist, index) in userStore.subscribedPlaylist"
-          :index="`/playlistDetails/${playlist.id}`"
-          @click="toPlaylistDetails(playlist.id)"
-          :key="index"
-        >
-          <i class="iconfont">&#xe80f;</i>
-          {{ playlist.name.slice(0, 5) }}
-          <span v-if="playlist.name.length >= 5">...</span>
-        </el-menu-item>
-      </el-menu-item-group>
     </el-menu>
   </aside>
 </template>
@@ -85,33 +61,19 @@ function selectMenu(menu: { path: string; name: string }) {
   router.push(menu.path)
 }
 
-function toPlaylistDetails(id: number) {
-  router.push({
-    name: 'playlistDetails',
-    params: { id },
-  })
-}
 </script>
 
 <style lang="less">
-// 简化的样式变量
-@menu-primary-color: #e13e3e;
-@text-primary: #333;
-@text-secondary: #666;
-@hover-bg: #f5f5f5;
-
 .el-menu {
   width: 100%;
-  height: calc(100vh - 120px);
-  overflow-y: scroll;
-  background-color: #fff !important;
+  background: var(--aside-bg-color);
   border-right: none !important;
 
   .el-menu-item {
     height: 48px;
     line-height: 48px;
-    color: @text-primary;
-    transition: all 0.3s ease;
+    color: #333;
+    transition: background 0.2s ease;
 
     i {
       margin-right: 12px;
@@ -123,26 +85,14 @@ function toPlaylistDetails(id: number) {
     }
 
     &:hover {
-      background: @hover-bg;
-      padding-left: 12px !important;
+      background: #f5f5f5;
     }
 
     &.is-active {
-      color: @menu-primary-color !important;
+      color: #e13e3e !important;
       background: #fde2e2;
       font-weight: 500;
       position: relative;
-
-      &::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 20px;
-        background: @menu-primary-color;
-      }
     }
   }
 
@@ -151,7 +101,7 @@ function toPlaylistDetails(id: number) {
 
     &__title {
       padding: 0 20px;
-      color: @text-secondary;
+      color: #666;
       font-size: 12px;
       font-weight: 500;
     }
@@ -160,7 +110,7 @@ function toPlaylistDetails(id: number) {
       height: 40px;
       line-height: 40px;
       font-size: 13px;
-      color: @text-secondary;
+      color: #666;
 
       span:first-child {
         display: inline-block;

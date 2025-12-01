@@ -1,3 +1,6 @@
 :root {
+  --header-bg-color: #f7f9fc;
   --main-bg-color: #f7f9fc;
+  --aside-bg-color: #f0f3f6;
+  --footer-bg-color: #fff;
 }

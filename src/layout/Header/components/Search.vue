@@ -82,7 +82,6 @@ onMounted(() => {
   :deep(.search-input) {
     .el-input__wrapper {
       border-radius: 20px;
-      background-color: #f7f9fc;
       border: 1px solid #e5e7eb;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       transition: all 0.2s ease;
