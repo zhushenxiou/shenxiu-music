@@ -55,8 +55,8 @@ const condition = reactive({
   initialKey: '-1',
   // 当前加载数据的次数（配合实现懒加载）
   count: 1,
-  // 每次加载25个
-  limit: 25,
+  // 每次加载30个
+  limit: 30,
   // 是否还有更多数据
   isMore: false,
 })

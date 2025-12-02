@@ -7,7 +7,7 @@ export const bannerApi = () => {
 
 // 推荐歌单的数据
 export const personalizedPlaylistApi = () => {
-  return request({ url: `/personalized?limit=20`, method: 'GET' })
+  return request({ url: `/personalized?limit=30`, method: 'GET' })
 }
 
 // 歌单标签列表

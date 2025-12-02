@@ -27,7 +27,7 @@ const keywords = computed(() => {
 const isLoading = ref(true)
 
 const pageInfo = reactive({
-  pageSize: 24,
+  pageSize: 20,
   curPage: 1, // 当前页
   total: 0, // 总页数
 })

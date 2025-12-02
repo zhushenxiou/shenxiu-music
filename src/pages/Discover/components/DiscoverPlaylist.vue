@@ -53,7 +53,7 @@ const currentSelectedName = ref('华语')
 const playlists = ref([] as any[])
 const pageInfo = ref({
   currentPage: 0,
-  pageSize: 25,
+  pageSize: 30,
 })
 const hasMore = ref(true)
 const playlistContainer = ref(null)

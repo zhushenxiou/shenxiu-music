@@ -32,10 +32,10 @@ const pageInfo = reactive({
   total: 0, // 总页数
 })
 
-let isLoading = ref(true)
+const isLoading = ref(true)
 
 // 歌手列表
-let singerlist = ref()
+const singerlist = ref()
 
 async function getSearchSinger() {
   isLoading.value = true
