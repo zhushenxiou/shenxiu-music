@@ -27,7 +27,7 @@
       <FootPlayer />
     </el-footer>
 
-    <!-- 回到顶部按钮 -->
+    <!-- 回到顶部按钮，对于滚动刷新的页面，需要对应页面单独配置el-backtop的target -->
     <el-backtop target=".scrollable-main" :bottom="120"></el-backtop>
   </el-container>
 </template>

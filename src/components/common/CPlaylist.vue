@@ -1,17 +1,32 @@
 <template>
   <!-- 封装歌单/专辑列表显示 -->
-  <div class="playlists">
-    <div class="item" v-for="item in playlists" :key="item.id" @click="toDetailsPage(item.id)">
-      <el-card shadow="hover" :body-style="{ padding: '0.5rem' }">
-        <el-image :src="item.picUrl">
+  <div class="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+    <div
+      v-for="item in playlists"
+      :key="item.id"
+      class="relative cursor-pointer font-black overflow-hidden transition-transform duration-300 hover:scale-105"
+      @click="toDetailsPage(item.id)"
+    >
+      <!-- 图片部分 -->
+      <div class="w-full aspect-square overflow-hidden">
+        <el-image :src="item.picUrl" class="w-full h-full object-cover" lazy>
           <template #placeholder>
-            <div class="image-slot">加载中<span class="dot">...</span></div>
+            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+              加载中<span class="dot">...</span>
+            </div>
           </template>
         </el-image>
-        <div class="name">
-          <span>{{ item.name }}</span>
-        </div>
-      </el-card>
+      </div>
+
+      <!-- 歌单介绍 -->
+      <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-2">
+        <span class="text-sm font-medium line-clamp-2 block h-[2.5rem]">{{ item.name }}</span>
+      </div>
+
+      <!-- 播放量 -->
+      <div v-if="item.playCount" class="absolute top-2 right-2 text-white text-md font-black">
+        {{ formatPlayCount(item.playCount) }}
+      </div>
     </div>
   </div>
 </template>
@@ -19,6 +34,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { formatPlayCount } from '@/utils/format'
 const router = useRouter()
 const { playlists, type } = defineProps(['playlists', 'type'])
 
@@ -30,35 +46,3 @@ function toDetailsPage(id: number) {
   })
 }
 </script>
-
-<style lang="less" scoped>
-.playlists {
-  display: grid;
-  // 每行5个
-  grid-template-columns: repeat(5, 1fr);
-
-  .item {
-    margin: 0.7rem;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-    }
-
-    .el-image {
-      width: 100%;
-      min-height: 12rem;
-      max-height: 16rem;
-      border-radius: 1rem;
-    }
-
-    span {
-      display: block;
-      height: auto;
-      text-align: center;
-      font-size: 13px;
-    }
-  }
-}
-</style>

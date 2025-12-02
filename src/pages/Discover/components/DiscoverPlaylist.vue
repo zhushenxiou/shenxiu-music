@@ -1,5 +1,5 @@
 <template>
-  <div class="discoveryPlaylist">
+  <div class="discoveryPlaylist" ref="playlistContainer" @scroll="handleScroll">
     <!-- 歌单分类 -->
     <div class="category">
       <!-- 所有类型选择菜单（可下拉选择） -->
@@ -24,80 +24,133 @@
         </el-button>
       </div>
     </div>
-    <div class="container" v-loading="loading">
+    <div class="w-full" v-loading="loading">
       <!-- 歌单列表 -->
       <Playlist :playlists="playlists" :type="'playlist'" />
-      <!-- 分页 -->
-      <div class="pagination">
-        <el-pagination background v-model:currentPage="pageInfo.currentPage" layout="prev, pager, next"
-          :total="pageInfo.total" :page-size="pageInfo.pageSize" @current-change="getHandpick" />
+      <!-- 加载更多提示 -->
+      <div v-if="!loading && hasMore" class="loading-more">
+        滚动到底部加载更多
       </div>
     </div>
+
+    <!-- 组件内回到顶部按钮 -->
+    <el-backtop target=".discoveryPlaylist" :bottom="120"></el-backtop>
   </div>
 </template>
 
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { playlistTagApi, hotTagApi, handpickApi } from '@/api/discovery'
 import Playlist from '@/components/common/CPlaylist.vue'
+import { debounce } from 'lodash-es'
 
 const loading = ref(true)
-// 歌单标签
+const loadingMore = ref(false)
 const playlistTag = ref()
-// 热门歌单标签
 const hotTag = ref()
-// 当前选中的标签Name
 const currentSelectedName = ref('华语')
+const playlists = ref([] as any[])
+const pageInfo = ref({
+  currentPage: 0,
+  pageSize: 25,
+})
+const hasMore = ref(true)
+const playlistContainer = ref(null)
 
 async function getPlaylistTag() {
   const res: any = await playlistTagApi()
   playlistTag.value = res.sub
 }
+
 async function getHotTag() {
   const res: any = await hotTagApi()
   hotTag.value = res.tags
 }
 
-// 切换标签
+// 切换标签时重置并重新加载
 function changeCategory(index: number) {
   currentSelectedName.value = playlistTag.value[index].name
-  getHandpick()
+  resetAndLoad()
 }
+
 function changeHotCategory(index: number) {
   currentSelectedName.value = hotTag.value[index].name
-  getHandpick()
+  resetAndLoad()
 }
 
+function resetAndLoad() {
+  pageInfo.value.currentPage = 0
+  playlists.value = []
+  hasMore.value = true
+  getHandpick(true)
+}
 
-// 根据分类和分页获取歌单信息
-const pageInfo = reactive({
-  currentPage: 1,
-  pageSize: 25, //设置为默认25页,且不可修改
-  total: 0,
+// 获取歌单，isReset标识是否为重置加载
+async function getHandpick(isReset = false) {
+  if (loadingMore.value || (!hasMore.value && !isReset)) return
+
+  if (isReset) {
+    loading.value = true
+  } else {
+    loadingMore.value = true
+  }
+
+  try {
+    const res: any = await handpickApi(currentSelectedName.value, pageInfo.value.currentPage)
+
+    // 处理数据
+    res.playlists.forEach((item: any) => {
+      item.picUrl = item.coverImgUrl
+    })
+
+    // 重置加载或追加加载
+    if (isReset) {
+      playlists.value = res.playlists
+    } else {
+      playlists.value = [...playlists.value, ...res.playlists]
+    }
+
+    // 检查是否还有更多数据
+    hasMore.value = res.playlists.length === pageInfo.value.pageSize
+
+    // 增加页码
+    pageInfo.value.currentPage++
+  } finally {
+    loading.value = false
+    loadingMore.value = false
+  }
+}
+
+// 滚动到底部检测,防抖处理
+const handleScroll = debounce(() => {
+  const container = playlistContainer.value
+  if (!container || loadingMore.value) return
+
+  const { scrollTop, scrollHeight, clientHeight } = container
+  // 当滚动到距离底部120px时加载更多
+  if (scrollHeight - scrollTop - clientHeight < 120 && hasMore.value) {
+    getHandpick()
+  }
+},500)
+
+// 初始化
+onMounted(async () => {
+  await Promise.all([getPlaylistTag(), getHotTag()])
+  await getHandpick(true)
 })
-// 歌单列表
-const playlists = ref()
-
-// 获取歌单
-async function getHandpick() {
-  loading.value = true
-  const res: any = await handpickApi(currentSelectedName.value, pageInfo.currentPage - 1)
-  pageInfo.total = res.total - pageInfo.pageSize
-  res.playlists.forEach((item: any) => {
-    item.picUrl = item.coverImgUrl
-  })
-  playlists.value = res.playlists
-  loading.value = false
-}
-
-getPlaylistTag()
-getHotTag()
-getHandpick()
 </script>
 
 <style lang="less">
 .discoveryPlaylist {
+  height: calc(100vh - 120px); // 设置合适的高度以允许滚动
+  width: 100%;
+  overflow-y: auto;
+  // 关闭滚动条样式
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   .category {
     display: flex;
     height: 2rem;
@@ -115,14 +168,11 @@ getHandpick()
     }
   }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-
-    .el-pagination.is-background .el-pager li:not(.disabled).active {
-      background-color: #f0230c !important; //修改后的背景图颜色
-      color: #fff;
-    }
+  .loading-more {
+    text-align: center;
+    padding: 1rem;
+    color: #999;
+    font-size: 0.9rem;
   }
 }
 </style>
