@@ -35,14 +35,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, onMounted, onUnmounted } from 'vue'
+import { ref, defineProps, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   getQRCodeKeyApi, getQRCodeBaseApi, checkQRCodeStateApi
 } from '@/api/login'
 import { useRouter } from 'vue-router';
 const router = useRouter()
-const { closeDialog } = defineProps(['closeDialog'])
+
+const props = defineProps({
+  loginDialogIsVisible: {
+    type: Boolean,
+    default: false
+  },
+  closeDialog: {
+    type: Function,
+    default: () => {}
+  }
+})
+
+watch(() => props.loginDialogIsVisible, () => {
+  if (!props.loginDialogIsVisible) {
+    clearCheckTimer()
+    console.log('定时器已关闭')
+  }else{
+    toQRCodeLogin()
+    console.log('定时器已开启')
+  }
+})
 
 
 // 二维码的Base64值
@@ -53,6 +73,13 @@ const QRCodeState = ref({})
 const QRCodeStateCode = ref(0)
 // 监测二维码状态的定时器
 let checkTimer: number | undefined = undefined
+// 清除监测二维码状态的定时器
+function clearCheckTimer() {
+  if (checkTimer) {
+    clearInterval(checkTimer)
+    checkTimer = undefined
+  }
+}
 
 //二维码登录
 async function toQRCodeLogin() {
@@ -62,24 +89,19 @@ async function toQRCodeLogin() {
   await getQRCodeBase(key)
   // 防抖,如果定时器存在，则先清除定时器
   if (checkTimer) {
-    clearInterval(checkTimer)
+    clearCheckTimer()
   }
   // 开启定时器，定时检测二维码的扫描状态
   checkTimer = setInterval(async () => {
     await checkQRCodeState(key)
-  }, 1000)
+  }, 1200)
 }
 
 onMounted(async () => {
   toQRCodeLogin()
 })
 
-onUnmounted(() => {
-  // 组件卸载时，清除定时器
-  if (checkTimer) {
-    clearInterval(checkTimer)
-  }
-})
+
 // 获取二维码key值
 async function getQRCodeKey() {
   const res = await getQRCodeKeyApi()
@@ -110,7 +132,7 @@ async function checkQRCodeState(key: string) {
     } else if (res.code === 803) {
       clearInterval(checkTimer)
       ElMessage.success('登录成功')
-      closeDialog()
+      props.closeDialog()
       // 刷新页面
       router.go(0)
     }

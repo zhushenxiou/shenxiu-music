@@ -16,8 +16,16 @@
       </div>
     </div>
     <!-- 登录页面弹窗 -->
-    <el-dialog v-model="loginDialogIsVisible" width="30%" :modal="false" :center="true" :draggable="true" top="10vh">
-      <Login :closeDialog="closeDialog"></Login>
+    <el-dialog
+      v-model="loginDialogIsVisible"
+      width="30%"
+      :modal="false"
+      :center="true"
+      :draggable="true"
+      top="10vh"
+      @close="closeDialog"
+    >
+      <Login :loginDialogIsVisible="loginDialogIsVisible" :closeDialog="closeDialog" ref="loginRef"></Login>
     </el-dialog>
   </div>
 
@@ -46,10 +54,13 @@ const userStore = useUserStore()
 
 const loginDialogIsVisible = ref(false)
 const quitDialogIsVisible = ref(false)
+const loginRef = ref(null)
 
+// 处理弹窗关闭事件
 function closeDialog() {
   loginDialogIsVisible.value = false
 }
+
 // 退出登录
 async function toLogout() {
   const res: any = await logoutApi()
