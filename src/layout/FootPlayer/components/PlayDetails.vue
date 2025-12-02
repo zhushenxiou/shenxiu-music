@@ -45,6 +45,7 @@
 import { usePlayerStore } from '@/stores/player.ts'
 import { onMounted, onUnmounted, ref } from 'vue'
 import CComments from '@/components/common/CComments.vue'
+import { ArrowDownBold } from '@element-plus/icons-vue'
 
 const store = usePlayerStore()
 

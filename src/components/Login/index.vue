@@ -57,10 +57,8 @@ const props = defineProps({
 watch(() => props.loginDialogIsVisible, () => {
   if (!props.loginDialogIsVisible) {
     clearCheckTimer()
-    console.log('定时器已关闭')
   }else{
     toQRCodeLogin()
-    console.log('定时器已开启')
   }
 })
 
