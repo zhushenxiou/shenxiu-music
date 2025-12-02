@@ -2,7 +2,7 @@
   <!-- 播放列表 -->
   <div class="playlist">
     <div class="amount">总{{ store.playlist.length || 0 }}首</div>
-    <el-table :data="store.playlist" stripe :row-class-name="addIndex" @row-dblclick="playSong" empty-text="暂无歌曲">
+    <el-table :data="store.playlist" stripe :row-class-name="addIndex" @row-click="playSong" empty-text="暂无歌曲">
       <el-table-column type="index" width="50" />
       <el-table-column prop="name" label="音乐标题">
         <template #default="scope">
