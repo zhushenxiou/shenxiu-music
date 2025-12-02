@@ -1,19 +1,26 @@
 <template>
   <!-- 封装video列表 -->
-  <div class="videoList">
-    <div class="item" v-for="video in videoData" :key="video.id" @click="toVideoDetails(video.id)">
+  <div class="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+    <div
+      v-for="video in videoData"
+      :key="video.id"
+      class="relative cursor-pointer font-black overflow-hidden transition-transform duration-300 hover:scale-105"
+      @click="toVideoDetails(video.id)"
+    >
       <!-- 播放量 -->
-      <div class="count">
-        <i class="iconfont">&#xe606;</i>
-        <span>{{ (video.playCount / 10000).toFixed(1) }}万</span>
+      <div class="absolute top-2 right-2 text-white text-md font-black flex items-center">
+        <i class="iconfont mr-1"></i>
+        <span>{{ formatPlayCount(video.playCount) }}</span>
       </div>
-      <el-image :src="video.cover">
+      <el-image :src="video.cover" class="w-full aspect-[16/9] object-cover rounded-lg">
         <template #placeholder>
-          <div class="image-slot">加载中<span class="dot">...</span></div>
+          <div class="w-full h-full flex items-center justify-center bg-gray-100">
+            加载中<span class="dot">...</span>
+          </div>
         </template>
       </el-image>
-      <div class="name">
-        <span>{{ video.name }}</span>
+      <div class="mt-2">
+        <span class="text-sm font-medium line-clamp-2 block h-[2.5rem]">{{ video.name }}</span>
       </div>
     </div>
   </div>
@@ -22,6 +29,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { useRouter } from 'vue-router';
+import { formatPlayCount } from '@/utils/format'
 const router = useRouter()
 const { videoData } = defineProps(['videoData'])
 
@@ -32,46 +40,3 @@ function toVideoDetails(id: number) {
   })
 }
 </script>
-
-<style lang="less" scoped>
-.videoList {
-  display: grid;
-  // 每行5个
-  grid-template-columns: repeat(4, 1fr);
-
-  .item {
-    margin: 0.75rem;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-      color: #ec4141;
-    }
-
-    .count {
-      position: absolute;
-      display: flex;
-      right: 1rem;
-      top: 0.5rem;
-      z-index: 1;
-      color: #eee;
-    }
-
-    .el-image {
-      width: 100%;
-      min-height: 6rem;
-      max-height: 10rem;
-      border-radius: 1rem;
-    }
-
-    span {
-      display: block;
-      text-align: center;
-      font-size: 13px;
-      padding-bottom: 0.5rem;
-    }
-  }
-}
-</style>

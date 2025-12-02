@@ -29,10 +29,10 @@ const pageInfo = reactive({
   total: 0, // 总页数
 })
 
-let isLoading = ref(true)
+const isLoading = ref(true)
 
-// 歌单列表
-let albums = ref()
+// 专辑列表
+const albums = ref()
 
 async function getSearchAlbum() {
   isLoading.value = true

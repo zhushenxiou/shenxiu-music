@@ -14,7 +14,7 @@ import CUserlist from '@/components/common/CUserlist.vue'
 
 const route = useRoute()
 
-let followedsList: any = ref([])
+const followedsList: any = ref([])
 
 async function getFolloweds() {
   const res: any = await userFollowedsApi(route.params.id)
