@@ -8,8 +8,7 @@
       @click="toVideoDetails(video.id)"
     >
       <!-- 播放量 -->
-      <div class="absolute top-2 right-2 text-white text-md font-black flex items-center">
-        <i class="iconfont mr-1"></i>
+      <div v-if="video.playCount" class="absolute top-2 right-2 text-white text-md font-black z-10">
         <span>{{ formatPlayCount(video.playCount) }}</span>
       </div>
       <el-image :src="video.cover" class="w-full aspect-[16/9] object-cover rounded-lg">
@@ -30,6 +29,7 @@
 import { defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 import { formatPlayCount } from '@/utils/format'
+
 const router = useRouter()
 const { videoData } = defineProps(['videoData'])
 

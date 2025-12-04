@@ -44,6 +44,7 @@ import { usePlayerStore } from '@/stores/player.ts'
 import Playlist from './components/Playlist.vue'
 import PlayDetails from './components/PlayDetails.vue'
 import PlayerControl from './components/PlayerControl.vue'
+import { ElDrawer } from 'element-plus'
 
 const store = usePlayerStore()
 </script>

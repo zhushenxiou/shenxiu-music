@@ -2,6 +2,7 @@
 import 'element-plus/theme-chalk/el-loading.css'
 import 'element-plus/theme-chalk/el-message.css'
 import 'element-plus/theme-chalk/el-message-box.css'
+import 'element-plus/theme-chalk/el-drawer.css'
 // 全局引入base.css
 import '@/assets/styles/base.css'
 

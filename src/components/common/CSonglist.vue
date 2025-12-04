@@ -52,6 +52,8 @@ import { useRouter } from 'vue-router'
 import { defineProps } from 'vue'
 import { songDownLoadApi } from '@/api/song'
 import { ElMessage } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
+
 const router = useRouter()
 const store = usePlayerStore()
 const props = defineProps(['songlist'])
