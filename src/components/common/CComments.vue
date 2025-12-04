@@ -12,7 +12,7 @@
       <div class="title" v-if="hotComments.length">最热评论</div>
       <div class="item" v-for="comment in hotComments" :key="comment.commentId">
         <!-- 评论人 -->
-        <div class="commenter">
+        <div class="commenter" @click="toUserDetails(comment.user.userId)">
           <div class="avatar">
             <img :src="comment.user.avatarUrl" alt="加载中...">
           </div>
@@ -94,6 +94,7 @@ function toUserDetails(id: number) {
     params: { id }
   })
 }
+
 // 我的评论内容
 const commentContent = ref('')
 // 发表评论
