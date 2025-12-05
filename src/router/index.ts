@@ -102,7 +102,7 @@ const router = createRouter({
     // 视频详情页
     {
       path: '/videoDtails/:id',
-      component: () => import('@/pages/MV/components/MVDetails.vue'),
+      component: () => import('@/pages/MVDetails/index.vue'),
       name: 'videoDetails',
     },
     //每日推荐

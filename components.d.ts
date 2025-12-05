@@ -12,6 +12,7 @@ declare module 'vue' {
     CMVList: typeof import('./src/components/common/CMVList.vue')['default']
     CPagination: typeof import('./src/components/common/CPagination.vue')['default']
     CPlaylist: typeof import('./src/components/common/CPlaylist.vue')['default']
+    CReletedMV: typeof import('./src/components/common/CReletedMV.vue')['default']
     CSingerList: typeof import('./src/components/common/CSingerList.vue')['default']
     CSonglist: typeof import('./src/components/common/CSonglist.vue')['default']
     CUserlist: typeof import('./src/components/common/CUserlist.vue')['default']
