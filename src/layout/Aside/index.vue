@@ -1,8 +1,8 @@
 <template>
   <aside class="w-full h-full bg-[--aside-bg-color]">
     <!-- logo -->
-     <div class="flex items-center justify-center h-[60px]">
-       <span class="text-lg text-center font-bold">神秀云音乐</span>
+     <div class="flex items-center justify-center h-[60px] cursor-pointer logo-hover mx-6">
+       <span class="text-2xl text-center font-black">神秀云音乐</span>
      </div>
     <!-- 菜单组件 -->
     <el-menu :default-active="activeMenu">
@@ -64,6 +64,38 @@ function selectMenu(menu: { path: string; name: string }) {
 </script>
 
 <style lang="less">
+/* Logo 悬停效果 */
+.logo-hover {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s ease;
+
+  &:hover {
+    color: #e13e3e;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #e13e3e;
+    transition: width 0.4s ease;
+    transform-origin: left;
+  }
+
+  &:hover::after {
+    width: 100%;
+    transform-origin: left;
+  }
+
+  &:not(:hover)::after {
+    transform-origin: right;
+  }
+}
+
 .el-menu {
   width: 100%;
   background: var(--aside-bg-color);

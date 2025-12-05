@@ -52,6 +52,7 @@ const route = useRoute()
     height: 100vh;
     overflow-y: auto;
     z-index: 1000;
+    border-right: 1px solid #e4e7ed;
   }
 
   // 右侧内容区域
@@ -89,7 +90,7 @@ const route = useRoute()
     left: 0;
     width: 100%;
     height: 70px;
-    z-index: 1000;
+    z-index: 1100;
     padding: 0;
   }
 }
