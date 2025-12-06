@@ -17,8 +17,6 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
-# 添加scripts目录忽略规则
-/scripts/
 
 # Editor directories and files
 .vscode/*
@@ -31,3 +29,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+.env
+.env.local
+.env.*.local
