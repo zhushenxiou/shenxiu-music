@@ -16,10 +16,13 @@ export const mvDetailsApi = (id: number | string | string[]) => {
   })
 }
 
-// 获取MV URL
-export const mvUrlApi = (id: number | string | string[]) => {
+/* 获取MV URL
+@param id MV id
+@param r 分辨率，默认 720 ，可选值 1080, 720, 480, 360
+*/
+export const mvUrlApi = (id: number | string | string[], r: number = 720) => {
   return request({
-    url: `/mv/url?id=${id}`,
+    url: `/mv/url?id=${id}&r=${r}`,
     method: 'get',
   })
 }
