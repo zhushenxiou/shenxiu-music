@@ -37,10 +37,6 @@
             <i class="iconfont icon-shoucang"></i>
             <span>收藏</span>
           </el-button>
-          <el-button type="danger" plain>
-            <i class="iconfont icon-fenxiang"></i>
-            <span>分享</span>
-          </el-button>
         </div>
         <!-- 歌曲数量和播放量 -->
         <div class="count">
@@ -77,6 +73,7 @@ import { formatPlayCount } from '@/utils/format'
 import { usePlayerStore } from '@/stores/player'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CComments from '@/components/common/CComments.vue'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
@@ -113,13 +110,20 @@ async function getPlaylistDetails() {
 
 // 收藏或取消收藏歌单
 async function toggleSubscribe() {
+  // 必须登录才能收藏或取消收藏
+  if (!localStorage.getItem('cookie')) {
+    ElMessage.warning('请先登录!')
+    return
+  }
   if (subscribed.value) {
     await playlistUnsubscribeApi(id.value)
     // 不通过网络更新是减少请求次数
     subscribed.value = false
+    ElMessage.success('取消收藏成功, 有延迟')
   } else {
     await playlistSubscribeApi(id.value)
     subscribed.value = true
+    ElMessage.success('收藏成功, 有延迟')
   }
 }
 

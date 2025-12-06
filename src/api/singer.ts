@@ -31,3 +31,19 @@ export const singerMVApi = (id: number | string | string[], offset: number, limi
     method: 'GET',
   })
 }
+
+// 收藏歌手
+export const singerSubscribeApi = (id: number | string | string[]) => {
+  return request({
+    url: `/artist/sub?t=1&id=${id}`,
+    method: 'GET',
+  })
+}
+
+// 取消收藏歌手
+export const singerUnsubscribeApi = (id: number | string | string[]) => {
+  return request({
+    url: `/artist/sub?t=0&id=${id}`,
+    method: 'GET',
+  })
+}

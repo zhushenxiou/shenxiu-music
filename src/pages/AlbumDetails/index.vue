@@ -23,10 +23,6 @@
             <i class="iconfont icon-shoucang"></i>
             <span>收藏</span>
           </el-button>
-          <el-button type="danger" plain>
-            <i class="iconfont icon-fenxiang"></i>
-            <span>分享</span>
-          </el-button>
         </div>
         <!-- 歌手 -->
         <div class="singer" v-if="album.artists">

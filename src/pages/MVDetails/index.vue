@@ -34,10 +34,6 @@
           class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors">
           <i class="iconfont mr-1">&#xe60c;</i>收藏
         </div>
-        <div
-          class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-400 hover:text-white transition-colors">
-          <i class="iconfont mr-1">&#xe624;</i>分享
-        </div>
       </div>
 
       <!-- MV评论 -->

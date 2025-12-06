@@ -12,7 +12,8 @@
           <span class="name">{{ singerInfo.name }}</span>
         </div>
         <div class="subscription">
-          <el-button type="danger" plain><i class="iconfont icon-shoucang"></i>关注</el-button>
+          <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe"><i
+              class="iconfont icon-shoucang"></i>{{ subscribed ? '取消关注' : '关注' }}</el-button>
         </div>
         <div class="count">
           <span class="songsCount">单曲数：{{ singerInfo.musicSize }}</span>
@@ -46,9 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { singerDetailsApi, singerHotSongApi, singerAlbumApi, singerMVApi } from '@/api/singer'
+import { singerDetailsApi, singerHotSongApi, singerAlbumApi, singerMVApi, singerSubscribeApi, singerUnsubscribeApi } from '@/api/singer'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CPlaylist from '@/components/common/CPlaylist.vue'
 import CVideoList from '@/components/common/CMVList.vue'
@@ -80,6 +81,8 @@ const songlist = ref()
 const albums = ref()
 // 歌手MV列表
 const mvlist: any = ref([])
+// 歌手是否关注
+const subscribed = ref(false)
 
 // 懒加载
 const condition = reactive({
@@ -95,19 +98,23 @@ const condition = reactive({
 async function getData() {
   isLoading.value = true
 
-  // 获取歌手详情
-  const details: any = await singerDetailsApi(id.value)
+  // 使用Promise.all并行获取歌手详情、热门单曲和专辑
+  const [details, hotSongs, albumRes]: any = await Promise.all([
+    singerDetailsApi(id.value),
+    singerHotSongApi(id.value),
+    singerAlbumApi(id.value)
+  ])
+
+  // 歌手信息
   singerInfo.value = details.data.artist
-  // 获取歌手热门单曲
-  const hotSongs: any = await singerHotSongApi(id.value)
+  // 歌手热门单曲
   songlist.value = hotSongs.songs
-
-  // 获取完热门单曲就可以展示了
-  isLoading.value = false
-
-  // 获取歌手专辑
-  const albumRes: any = await singerAlbumApi(id.value)
+  // 歌手专辑
   albums.value = albumRes.hotAlbums
+  // 该歌手是否关注
+  subscribed.value = details.data.user.followed
+
+  isLoading.value = false
 
   getSingerMV()
 }
@@ -119,7 +126,6 @@ async function getSingerMV() {
     item.cover = item.imgurl
   })
   mvlist.value.push(...mvRes.mvs)
-  console.log(mvlist.value)
   condition.isMore = mvRes.hasMore
 }
 
@@ -133,7 +139,28 @@ async function continueLoading() {
   }
 }
 
-getData()
+// 关注或取消关注歌手
+async function toggleSubscribe() {
+  // 必须登录才能关注或取消关注
+  if (!localStorage.getItem('cookie')) {
+    ElMessage.warning('请先登录!')
+    return
+  }
+  if (subscribed.value) {
+    await singerUnsubscribeApi(id.value)
+    // 不通过网络更新是减少请求次数
+    subscribed.value = false
+    ElMessage.success('取消关注成功, 有延迟')
+  } else {
+    await singerSubscribeApi(id.value)
+    subscribed.value = true
+    ElMessage.success('关注成功, 有延迟')
+  }
+}
+
+onMounted(() => {
+  getData()
+})
 </script>
 
 <style lang="less">
