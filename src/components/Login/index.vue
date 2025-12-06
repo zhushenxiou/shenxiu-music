@@ -50,14 +50,14 @@ const props = defineProps({
   },
   closeDialog: {
     type: Function,
-    default: () => {}
+    default: () => { }
   }
 })
 
 watch(() => props.loginDialogIsVisible, () => {
   if (!props.loginDialogIsVisible) {
     clearCheckTimer()
-  }else{
+  } else {
     toQRCodeLogin()
   }
 })
@@ -129,13 +129,13 @@ async function checkQRCodeState(key: string) {
       ElMessage.success('扫码成功，请确认是否登录')
     } else if (res.code === 803) {
       clearInterval(checkTimer)
+      // 将获取到的 cookie 保存在 localStorage 中
+      localStorage.setItem('cookie', res.cookie)
       ElMessage.success('登录成功')
       props.closeDialog()
       // 刷新页面
       router.go(0)
     }
-    // 将获取到的 cookie 保存在 localStorage 中
-    localStorage.setItem('cookie', res.cookie)
     // 储存新的状态码状态码和状态值
     QRCodeStateCode.value = res.code
     QRCodeState.value = res
