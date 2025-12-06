@@ -33,7 +33,7 @@
             <i class="iconfont icon-24gl-playCircle"></i>
             <span>播放全部</span>
           </el-button>
-          <el-button type="danger" plain>
+          <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe">
             <i class="iconfont icon-shoucang"></i>
             <span>收藏</span>
           </el-button>
@@ -71,7 +71,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { playlistDetailsApi, songDetailsApi } from '@/api/playlist'
+import { playlistDetailsApi, songDetailsApi, playlistSubscribeApi, playlistUnsubscribeApi } from '@/api/playlist'
 import { timestampToDate } from '@/utils/time'
 import { formatPlayCount } from '@/utils/format'
 import { usePlayerStore } from '@/stores/player'
@@ -105,22 +105,23 @@ async function getPlaylistDetails() {
   // 歌单信息
   playlistDetails.value = res.playlist
   // 收藏状态
-  subscribed.value = res.subscribed
+  subscribed.value = res.playlist.subscribed
   // 获取歌单中的歌曲信息
   await getSongDetails()
   isLoading.value = false
 }
 
-// 收藏或取消收藏歌单 未知bug
-// async function toggleSubscribe() {
-//   if (subscribed.value) {
-//     await playlistUnsubscribeApi(id.value)
-//     subscribed.value = false
-//   } else {
-//     await playlistSubscribeApi(id.value)
-//     subscribed.value = true
-//   }
-// }
+// 收藏或取消收藏歌单
+async function toggleSubscribe() {
+  if (subscribed.value) {
+    await playlistUnsubscribeApi(id.value)
+    // 不通过网络更新是减少请求次数
+    subscribed.value = false
+  } else {
+    await playlistSubscribeApi(id.value)
+    subscribed.value = true
+  }
+}
 
 // 根据trackIds查询每曲音乐详情
 async function getSongDetails() {
