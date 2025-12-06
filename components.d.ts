@@ -12,7 +12,6 @@ declare module 'vue' {
     CMVList: typeof import('./src/components/common/CMVList.vue')['default']
     CPagination: typeof import('./src/components/common/CPagination.vue')['default']
     CPlaylist: typeof import('./src/components/common/CPlaylist.vue')['default']
-    CReletedMV: typeof import('./src/components/common/CReletedMV.vue')['default']
     CSingerList: typeof import('./src/components/common/CSingerList.vue')['default']
     CSonglist: typeof import('./src/components/common/CSonglist.vue')['default']
     CUserlist: typeof import('./src/components/common/CUserlist.vue')['default']
@@ -45,9 +44,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
-    VedioPlayer: typeof import('./src/components/VedioPlayer.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
-    XgVedioPlayer: typeof import('./src/components/XgVedioPlayer.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

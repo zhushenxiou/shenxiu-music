@@ -10,7 +10,7 @@
 
 ## 配置
 
-本项目大部分配置不需要改，2025年5月前都能直接运行。5月后后端服务器到期，你需要自己部署NeteaseCloudMusicApi后端，修改后端接口地址。
+本项目大部分配置不需要改，2027年7月前都能直接运行。当后端服务器到期，你需要自己部署NeteaseCloudMusicApi后端，修改后端接口地址。
 @/vite.config.ts
 
 ```js
@@ -18,7 +18,7 @@
   server: {
     proxy: {
       '/api': {
-        target: 'http://8.137.110.245:3000/', # 后端服务器地址
+        target: 'http://117.72.189.56:3001/', // 后端服务器地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
@@ -34,12 +34,10 @@
 - pull
 
 ```sh
-git pull https://gitee.com/zhu-liang/music-pc-terminal---front-end
+git pull https://gitee.com/zhu-liang/shenxiu-music-ui
 ```
 
-或者直接下载ZIP
-
-- 安装
+- 安装 node22 版本
 
 ```sh
 npm i
@@ -76,6 +74,7 @@ yarn build
 
 - 视频分类
 - MV展示列表
+- 二次封装xgplayer视频播放器（清晰度切换）
 
 #### 每日推荐
 
