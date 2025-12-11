@@ -1,43 +1,43 @@
 <template>
   <!-- 专辑详情页 -->
-  <div class="albumDetails">
-    <div class="top">
+  <div>
+    <div class="w-full flex items-center mb-4">
       <!-- 专辑封面 -->
-      <div class="left">
-        <img :src="album.blurPicUrl" />
+      <div class="w-40 h-40 rounded-xl overflow-hidden">
+        <img :src="album.blurPicUrl" class="h-40 w-40 rounded-xl" lazy />
       </div>
       <!-- 专辑信息 -->
-      <div class="right">
+      <div class="ml-4">
         <!-- 标题 -->
-        <div class="title">
-          <span class="tag">专辑</span>
-          <span class="name">{{ album.name }}</span>
+        <div class="flex items-center mb-4">
+          <span class="h-6 w-16 text-red-500 text-sm text-center border border-red-500 rounded-md mr-2">专辑</span>
+          <span class="text-2xl font-bold text-black">{{ album.name }}</span>
         </div>
         <!-- 操作 -->
-        <div class="operate">
+        <div class="mb-2">
           <el-button type="danger" @click="playAll" id="playAll">
-            <i class="iconfont icon-24gl-playCircle"></i>
-            <span>播放全部</span>
+            <i class="iconfont icon-24gl-playCircle text-xl"></i>
+            <span class="ml-2">播放全部</span>
           </el-button>
           <el-button type="danger" plain>
             <i class="iconfont icon-shoucang"></i>
-            <span>收藏</span>
+            <span class="ml-2">收藏</span>
           </el-button>
         </div>
         <!-- 歌手 -->
-        <div class="singer" v-if="album.artists">
+        <div class="text-sm text-gray-600 mt-2" v-if="album.artists">
           歌手：
           <span v-for="(ar, index) in album.artists" :key="index">
             {{ ar.name }}
           </span>
         </div>
         <!-- 时间 -->
-        <div class="time">
+        <div class="text-sm text-gray-600 mt-2">
           发布时间：{{ timestampToDate(album.publishTime) }}
         </div>
       </div>
     </div>
-    <el-tabs v-model="selectedTag" class="albumContent" v-loading="isLoading">
+    <el-tabs v-model="selectedTag" v-loading="isLoading">
       <el-tab-pane label="专辑歌曲" name="songs">
         <CSonglist :songlist="songlist" />
       </el-tab-pane>
@@ -45,7 +45,7 @@
         <CComments :type="'album'" :id="id" />
       </el-tab-pane>
       <el-tab-pane label="专辑描述" name="descrip">
-        <div class="description">{{ album.description }}</div>
+        <div class="text-sm text-gray-700 leading-relaxed tracking-wider indent-8">{{ album.description }}</div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -103,84 +103,3 @@ function playAll() {
 
 getAlbumDetails()
 </script>
-
-<style lang="less">
-.albumDetails {
-  .top {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-
-    .left img {
-      height: 10rem;
-      width: 10rem;
-      border-radius: 1rem;
-      margin: 0 1rem;
-    }
-
-    .right {
-      align-items: center;
-      margin-bottom: 1rem;
-
-      .title {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        .tag {
-          display: block;
-          height: 1.5rem;
-          width: 4rem;
-          color: #ec4141;
-          font-size: 15px !important;
-          text-align: center;
-          border: 1px solid #ec4141;
-          border-radius: 5px;
-          margin-right: 0.5rem;
-        }
-
-        .name {
-          font-size: 24px;
-          font-weight: bold;
-          color: #000;
-        }
-      }
-
-      .operate {
-        margin-bottom: 0.5rem;
-
-        #playAll i {
-          font-size: 22px;
-        }
-
-        span {
-          margin-left: 0.5rem;
-        }
-      }
-
-      .singer,
-      .time {
-        margin-top: 0.5rem;
-        font-size: 14px;
-        color: #444;
-      }
-    }
-
-  }
-
-  .albumContent {
-    height: 100%;
-
-    .description {
-      font-size: 14px;
-      color: #373737;
-      line-height: 1.5rem;
-      // letter-spacing 属性增加或减少字符间的空白（字符间距）
-      letter-spacing: 1px;
-      // 首行缩进
-      text-indent: 2rem;
-    }
-  }
-}
-</style>

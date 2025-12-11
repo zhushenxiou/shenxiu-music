@@ -11,10 +11,6 @@ import IconsResolver from 'unplugin-icons/resolver'
 import compression from 'vite-plugin-compression'
 
 export default defineConfig({
-  css: {
-    // 关闭css sourcemap，减少文件大小
-    devSourcemap: false,
-  },
   plugins: [
     vue(),
     vueDevTools(),

@@ -1,53 +1,53 @@
 <template>
-  <div class="playlistDetails">
+  <div class="w-full">
     <!-- 歌单介绍 -->
-    <div class="introduce">
+    <div class="flex mb-4">
       <div class="img">
-        <el-image :src="playlistDetails.coverImgUrl" lazy>
+        <el-image :src="playlistDetails.coverImgUrl" lazy class="w-40 h-40 rounded-xl">
           <template #placeholder>
             <div class="image-slot">加载中<span class="dot">...</span></div>
           </template>
         </el-image>
       </div>
-      <div class="text">
+      <div class="flex-1 ml-8">
         <!-- 标题 -->
-        <div class="title">
-          <span class="tag">歌单</span>
-          <span class="name">{{ playlistDetails.name }}</span>
+        <div class="flex items-center mb-4">
+          <span class="h-6 w-16 text-red-500 text-sm text-center border border-red-500 rounded-md mr-2">歌单</span>
+          <span class="text-2xl font-bold text-black">{{ playlistDetails.name }}</span>
         </div>
         <!-- 作者信息 -->
-        <div class="authorInfo">
-          <el-image :src="playlistDetails.creator.backgroundUrl">
+        <div class="flex items-center mb-4">
+          <el-image :src="playlistDetails.creator.backgroundUrl" class="h-8 w-8 mr-2">
             <template #placeholder>
               <div class="image-slot">加载中<span class="dot">...</span></div>
             </template>
           </el-image>
-          <span class="name" @click="toUserDetails(playlistDetails.creator.userId)">
+          <span class="text-blue-500 cursor-pointer mr-2" @click="toUserDetails(playlistDetails.creator.userId)">
             {{ playlistDetails.creator.nickname }}
           </span>
-          <span class="createdDate"> {{ timestampToDate(playlistDetails.createTime) }}创建</span>
+          <span class="text-xs text-gray-600"> {{ timestampToDate(playlistDetails.createTime) }}创建</span>
         </div>
         <!-- 操作 -->
-        <div class="operate">
+        <div class="mb-4">
           <el-button type="danger" @click="playAll" id="playAll">
-            <i class="iconfont icon-24gl-playCircle"></i>
-            <span>播放全部</span>
+            <i class="iconfont icon-24gl-playCircle text-xl"></i>
+            <span class="ml-2">播放全部</span>
           </el-button>
           <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe">
             <i class="iconfont icon-shoucang"></i>
-            <span>收藏</span>
+            <span class="ml-2">收藏</span>
           </el-button>
         </div>
         <!-- 歌曲数量和播放量 -->
-        <div class="count">
-          <div class="songsCount">歌曲：{{ playlistDetails.trackCount }}首</div>
-          <div class="playCount">
+        <div class="flex text-sm text-gray-600">
+          <div class="mr-4">歌曲：{{ playlistDetails.trackCount }}首</div>
+          <div>
             播放量: {{ formatPlayCount(playlistDetails.playCount) }} 次
           </div>
         </div>
       </div>
     </div>
-    <el-tabs v-model="selectedTag" class="playlistContent" v-loading="isLoading">
+    <el-tabs v-model="selectedTag" v-loading="isLoading">
       <el-tab-pane label="歌单歌曲" name="songs">
         <CSonglist :songlist="songlist" />
       </el-tab-pane>
@@ -55,17 +55,18 @@
         <CComments :type="'playlist'" :id="id" />
       </el-tab-pane>
       <el-tab-pane label="歌单描述" name="descrip">
-        <div class="description">{{ playlistDetails.description }}</div>
+        <div class="text-sm text-gray-700 leading-relaxed tracking-wider indent-8">{{ playlistDetails.description }}
+        </div>
       </el-tab-pane>
     </el-tabs>
 
     <!-- 回到顶部 -->
-    <el-backtop target=".playlistDetails" :bottom="120"></el-backtop>
+    <el-backtop target=".w-full" :bottom="120"></el-backtop>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { playlistDetailsApi, songDetailsApi, playlistSubscribeApi, playlistUnsubscribeApi } from '@/api/playlist'
 import { timestampToDate } from '@/utils/time'
@@ -155,109 +156,7 @@ function toUserDetails(id: number) {
 }
 
 
-getPlaylistDetails()
+onMounted(() => {
+  getPlaylistDetails()
+})
 </script>
-
-<style lang="less">
-.playlistDetails {
-  width: 100%;
-
-  .introduce {
-    display: flex;
-    margin-bottom: 1rem;
-
-    .el-image {
-      width: 11rem;
-      height: 11rem;
-      border-radius: 1rem;
-    }
-
-    .text {
-      width: calc(100%-12rem);
-      margin-left: 2rem;
-
-      .title {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        .tag {
-          display: block;
-          height: 1.5rem;
-          width: 4rem;
-          color: #ec4141;
-          font-size: 15px !important;
-          text-align: center;
-          border: 1px solid #ec4141;
-          border-radius: 5px;
-          margin-right: 0.5rem;
-        }
-
-        .name {
-          font-size: 24px;
-          font-weight: bold;
-          color: #000;
-        }
-      }
-
-      .authorInfo {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        .el-image {
-          height: 2rem;
-          width: 2rem;
-          margin-right: 0.5rem;
-        }
-
-        .name {
-          color: #6191c2;
-          cursor: pointer;
-          margin-right: 0.5rem;
-        }
-
-        .createdDate {
-          font-size: 13px;
-          color: #444;
-        }
-      }
-
-      .operate {
-        margin-bottom: 1rem;
-
-        #playAll i {
-          font-size: 22px;
-        }
-
-        span {
-          margin-left: 0.5rem;
-        }
-      }
-
-      .count {
-        display: flex;
-        font-size: 14px;
-        color: #444;
-
-        .songsCount {
-          margin-right: 1rem;
-        }
-      }
-    }
-  }
-
-  .playlistContent {
-
-    .description {
-      font-size: 14px;
-      color: #373737;
-      line-height: 1.5rem;
-      // letter-spacing 属性增加或减少字符间的空白（字符间距）
-      letter-spacing: 1px;
-      // 首行缩进
-      text-indent: 2rem;
-    }
-  }
-}
-</style>
