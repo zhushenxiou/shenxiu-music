@@ -1,4 +1,6 @@
 @import './var.css';
+@import './element-custom.css';
+
 /* 全局重置样式 */
 * {
   margin: 0;
@@ -64,20 +66,6 @@ body,
   background-color: #fdf5f5;
 }
 
-/* 美化抽屉 */
-.el-drawer.rtl {
-  height: calc(100vh - 60px);
-}
-
-.el-drawer.rtl .el-drawer__body,
-.el-drawer.btt .el-drawer__body {
-  padding: 0;
-}
-
-.el-drawer.rtl .el-drawer__body::-webkit-scrollbar {
-  width: 5px;
-}
-
 /* 美化滚动条 */
 ::-webkit-scrollbar {
   width: 5px;
@@ -106,30 +94,3 @@ body,
   background-color: rgba(144, 147, 153, 0.3);
 }
 
-/* 美化tab标签 */
-.el-tabs {
-  .el-tabs__nav-wrap {
-    .el-tabs__item {
-      font-size: 14px;
-
-      &:hover {
-        color: black;
-      }
-    }
-
-    .el-tabs__active-bar {
-      background-color: #e13e3e;
-      height: 0.2rem;
-    }
-
-    .is-active {
-      font-size: 16px;
-      font-weight: bolder;
-      color: black;
-    }
-
-    &::after {
-      background-color: var(--main-bg-color);
-    }
-  }
-}

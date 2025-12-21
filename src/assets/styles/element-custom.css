@@ -1,0 +1,4 @@
+/* 修改element-ui默认样式 */
+:root {
+  --el-color-primary: #e13e3e !important;
+}
