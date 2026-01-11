@@ -46,7 +46,7 @@ declare module 'vue' {
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
-  export interface ComponentCustomProperties {
+  export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }
