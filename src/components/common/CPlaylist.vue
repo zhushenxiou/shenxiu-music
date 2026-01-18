@@ -9,7 +9,7 @@
     >
       <!-- 图片部分 -->
       <div class="w-full aspect-square overflow-hidden">
-        <el-image :src="item.picUrl" class="w-full h-full object-cover" lazy>
+        <el-image :src="optimizeImageUrl(item.picUrl, 250, 250)" class="w-full h-full object-cover" lazy>
           <template #placeholder>
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
               加载中<span class="dot">...</span>
@@ -32,9 +32,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatPlayCount } from '@/utils/format'
+import { optimizeImageUrl } from '@/utils/img'
+
 const router = useRouter()
 const { playlists, type } = defineProps(['playlists', 'type'])
 

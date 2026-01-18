@@ -14,7 +14,7 @@
         <!-- 评论人 -->
         <div class="commenter" @click="toUserDetails(comment.user.userId)">
           <div class="avatar">
-            <img :src="comment.user.avatarUrl" alt="加载中...">
+            <img :src="optimizeImageUrl(comment.user.avatarUrl, 50, 50)" alt="加载中...">
           </div>
           <div class="userInfo">
             <div class="nickname">{{ comment.user.nickname }}</div>
@@ -33,7 +33,7 @@
         <!-- 评论人 -->
         <div class="commenter" @click="toUserDetails(comment.user.userId)">
           <div class="avatar">
-            <img :src="comment.user.avatarUrl" alt="加载中...">
+            <img :src="optimizeImageUrl(comment.user.avatarUrl, 50, 50)" alt="加载中...">
           </div>
           <div class="userInfo">
             <div class="nickname">{{ comment.user.nickname }}</div>
@@ -52,11 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { songCommentApi, playlistCommentApi, albumCommentApi, mvCommentApi, releaseCommentApi, delCommentApi } from '@/api/comment'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+import { optimizeImageUrl } from '@/utils/img'
 
 const router = useRouter()
 const userStore = useUserStore()

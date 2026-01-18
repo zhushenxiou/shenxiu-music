@@ -2,7 +2,7 @@
   <!-- 封装用户列表 -->
   <div class="userlist">
     <div class="item" v-for="user in userlist" :key="user.userId" @click="toUserDetails(user.userId)">
-      <el-image :src="user.avatarUrl">
+      <el-image :src="optimizeImageUrl(user.avatarUrl, 50, 50)">
         <template #placeholder>
           <div class="image-slot">加载中<span class="dot">...</span></div>
         </template>
@@ -13,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import { useRouter } from 'vue-router';
+import { optimizeImageUrl } from '@/utils/img'
+
 const router = useRouter()
 const { userlist } = defineProps(['userlist'])
 

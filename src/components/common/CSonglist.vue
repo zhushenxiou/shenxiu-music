@@ -49,7 +49,6 @@
 import { usePlayerStore } from '@/stores/player'
 import { msToMinSeconed } from '@/utils/time'
 import { useRouter } from 'vue-router'
-import { defineProps } from 'vue'
 import { songDownLoadApi } from '@/api/song'
 import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'

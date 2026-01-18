@@ -69,12 +69,12 @@ async function getHotTag() {
 }
 
 // 切换标签时重置并重新加载
-function changeCategory(index: number) {
+function changeCategory(index: number | string) {
   currentSelectedName.value = playlistTag.value[index].name
   resetAndLoad()
 }
 
-function changeHotCategory(index: number) {
+function changeHotCategory(index: number | string) {
   currentSelectedName.value = hotTag.value[index].name
   resetAndLoad()
 }
@@ -132,7 +132,7 @@ const handleScroll = debounce(() => {
   if (scrollHeight - scrollTop - clientHeight < 120 && hasMore.value) {
     getHandpick()
   }
-},500)
+}, 500)
 
 // 初始化
 onMounted(async () => {
@@ -146,6 +146,7 @@ onMounted(async () => {
   height: calc(100vh - 120px); // 设置合适的高度以允许滚动
   width: 100%;
   overflow-y: auto;
+
   // 关闭滚动条样式
   &::-webkit-scrollbar {
     display: none;

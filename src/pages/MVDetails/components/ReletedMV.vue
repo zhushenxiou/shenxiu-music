@@ -13,7 +13,7 @@
         <i class="iconfont mr-1">&#xe606;</i>
         <span>{{ (mv.playCount / 10000).toFixed(1) }}万</span>
       </div>
-      <el-image :src="mv.cover" class="w-full rounded-xl">
+      <el-image :src="optimizeImageUrl(mv.cover, 400, 225)" class="w-full rounded-xl">
         <template #placeholder>
           <div class="image-slot">加载中<span class="dot">...</span></div>
         </template>
@@ -26,8 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { optimizeImageUrl } from '@/utils/img'
 import type { PropType } from 'vue'
 
 const router = useRouter()

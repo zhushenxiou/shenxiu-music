@@ -15,7 +15,7 @@
           <!-- 展示前三首歌 -->
           <div class="songs h-full w-[70%] ml-2">
             <div class="song h-[33.3%] w-full no-ellipsis" v-for="(song, index) in item.tracks" :key="song.first">
-              <span class="text-xs text-gray-700 ml-2 leading-[3rem]">{{ index + 1 }}</span>
+              <span class="text-xs text-gray-700 ml-2 leading-[3rem]">{{ Number(index) + 1 }}</span>
               <!-- 歌名 -->
               <span class="text-sm ml-2 leading-[3rem] hover:text-red-500 hover:border-b hover:border-red-500 no-ellipsis">{{ song.first }}</span>
               <!-- 歌手 -->
