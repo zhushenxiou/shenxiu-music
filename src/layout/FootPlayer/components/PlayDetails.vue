@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePlayerStore } from '@/stores/player.ts'
+import { usePlayerStore } from '@/stores/player'
 import { onMounted, onUnmounted, ref } from 'vue'
 import CComments from '@/components/common/CComments.vue'
 import { ArrowDownBold } from '@element-plus/icons-vue'
@@ -77,13 +77,6 @@ onUnmounted(() => {
 .playDetails {
   height: 100%;
   width: 100%;
-  background-image: linear-gradient(
-    to bottom,
-    #ec4141 0%,
-    rgb(242, 199, 199) 20%,
-    #eee 80%,
-    #fff 100%
-  );
 
   .details {
     width: 100%;

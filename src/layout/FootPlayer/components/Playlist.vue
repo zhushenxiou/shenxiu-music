@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePlayerStore } from '@/stores/player.ts'
+import { usePlayerStore } from '@/stores/player'
 const store = usePlayerStore()
 
 // 为 element-Plus 表格的行属性中添加索引
