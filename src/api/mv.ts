@@ -11,6 +11,7 @@ export interface MVListResponse {
 export interface MVDetailsResponse {
   data: {
     name: string
+    desc: string
     cover: string
     artists: ArtistType[]
     publishTime: string
@@ -22,10 +23,6 @@ export interface MVUrlResponse {
   data: {
     url: string
   }
-}
-
-export interface RelatedMVResponse {
-  mvs: MVType[]
 }
 
 // ==================== API 函数 ====================
@@ -54,14 +51,6 @@ export const mvDetailsApi = (id: number | string | string[]) => {
 export const mvUrlApi = (id: number | string | string[], r: number = 720) => {
   return request<MVUrlResponse>({
     url: `/mv/url?id=${id}&r=${r}`,
-    method: 'get',
-  })
-}
-
-/** 获取相似 MVType */
-export const reletedMvApi = (id: number | string | string[]) => {
-  return request<RelatedMVResponse>({
-    url: `/simi/mv?mvid=${id}`,
     method: 'get',
   })
 }

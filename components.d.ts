@@ -47,6 +47,7 @@ declare module 'vue' {
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
   export interface GlobalDirectives {
+    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

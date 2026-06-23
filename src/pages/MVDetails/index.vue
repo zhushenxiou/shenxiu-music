@@ -1,58 +1,74 @@
 <template>
   <!-- 视频详情页 -->
-  <div class="flex w-full" v-loading="isLoading">
-    <!-- 主体内容 -->
-    <div class="w-[65vw] pr-6 border-r-2 border-gray-300">
-      <div class="text-lg font-semibold mb-2.5">视频详情</div>
+  <div class="flex flex-col w-full" v-loading="isLoading">
+    <div class="text-lg font-semibold mb-2.5">视频详情</div>
 
-      <!-- 视频播放组件 -->
-      <VideoPlayer width="100%" :poster="videoDetails.cover" :sources="sources"
-        :autoplay="false" />
+    <!-- 视频 + 信息：左右布局 -->
+    <div class="flex gap-6">
+      <!-- 左侧：视频播放区域 -->
+      <div class="flex-shrink-0 w-[800px]">
+        <VideoPlayer
+          width="100%"
+          :poster="videoDetails.cover"
+          :sources="sources"
+          :autoplay="false"
+        />
+      </div>
 
-      <!-- 作者 -->
-      <div class="flex w-full my-4">
-        <div class="flex items-center mx-2 cursor-pointer" v-for="ar in videoDetails.artists" :key="ar.id"
-          @click="toSingerDetails(ar.id)">
-          <div class="img">
-            <img :src="ar.img1v1Url" alt="" class="w-12 h-12 rounded-full" />
+      <!-- 右侧：视频信息 -->
+      <div class="flex flex-col flex-1 min-w-0">
+        <!-- 标题 -->
+        <div class="text-xl font-semibold mb-4">{{ videoDetails.name }}</div>
+        <div class="text-xs font-light mb-8 line-clamp-4">{{ videoDetails.desc || "暂无描述" }}</div>
+
+        <!-- 作者 -->
+        <div class="flex flex-wrap mb-4">
+          <div
+            class="flex items-center mr-4 cursor-pointer"
+            v-for="ar in videoDetails.artists"
+            :key="ar.id"
+            @click="toSingerDetails(ar.id)"
+          >
+            <img :src="ar.img1v1Url" alt="" class="w-10 h-10 rounded-full" />
+            <span class="ml-2 text-gray-600 text-sm">{{ ar.name }}</span>
           </div>
-          <div class="ml-2 text-gray-600 text-sm">{{ ar.name }}</div>
+        </div>
+
+        <!-- 发布日期 / 播放量 -->
+        <div class="mb-4">
+          <span class="mr-8 text-sm text-gray-500">发布：{{ videoDetails.publishTime }}</span>
+          <span class="text-sm text-gray-500"
+            >播放量：{{ (videoDetails.playCount / 10000).toFixed(1) }}万</span
+          >
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="flex">
+          <div
+            class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
+          >
+            <i class="iconfont mr-1">&#xe608;</i>赞
+          </div>
+          <div
+            class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
+          >
+            <i class="iconfont mr-1">&#xe60c;</i>收藏
+          </div>
         </div>
       </div>
-
-      <!-- 标题/发布日期/播放量/操作 -->
-      <div class="text-xl font-semibold mb-2.5">{{ videoDetails.name }}</div>
-      <span class="mr-12 text-sm text-gray-500">发布：{{ videoDetails.publishTime }}</span>
-      <span class="mr-12 text-sm text-gray-500">播放量：{{ (videoDetails.playCount / 10000).toFixed(1) }}万</span>
-
-      <div class="flex mt-4">
-        <div
-          class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors">
-          <i class="iconfont mr-1">&#xe608;</i>赞
-        </div>
-        <div
-          class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors">
-          <i class="iconfont mr-1">&#xe60c;</i>收藏
-        </div>
-      </div>
-
-      <!-- MV评论 -->
-      <CComments :type="'mv'" :id="id" />
     </div>
 
-    <!-- 相关推荐 -->
-    <CReletedMV :mv-data="reletedMV" class="flex-1" />
+    <!-- MV评论 -->
+    <CComments :type="'mv'" :id="id" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { mvDetailsApi, mvUrlApi, reletedMvApi, type MVDetailsResponse } from '@/api/mv'
+import { mvDetailsApi, mvUrlApi, type MVDetailsResponse } from '@/api/mv'
 import CComments from '@/components/common/CComments.vue'
-import CReletedMV from './components/ReletedMV.vue'
 import VideoPlayer from '@/components/VideoPlayer.vue'
-import type { MVType } from '@/api/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -63,6 +79,7 @@ const isLoading = ref(true)
 /** 视频详细信息 */
 const videoDetails = ref<MVDetailsResponse['data']>({
   name: '',
+  desc: '',
   cover: '',
   artists: [],
   publishTime: '',
@@ -76,20 +93,15 @@ const sources = ref<Array<{ definition: string; url: string }>>([
   { definition: '480P', url: '' },
 ])
 
-/** 相关推荐 MV */
-const reletedMV = ref<MVType[]>([])
-
 async function getData() {
   isLoading.value = true
-  const [details, reletedRes, urlRes1080, urlRes720, urlRes480] = await Promise.all([
+  const [details, urlRes1080, urlRes720, urlRes480] = await Promise.all([
     mvDetailsApi(id.value),
-    reletedMvApi(id.value),
     mvUrlApi(id.value, 1080),
     mvUrlApi(id.value, 720),
     mvUrlApi(id.value, 480),
   ])
   videoDetails.value = details.data
-  reletedMV.value = reletedRes.mvs
   sources.value = [
     { definition: '1080P', url: urlRes1080.data.url },
     { definition: '720P', url: urlRes720.data.url },
