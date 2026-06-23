@@ -1,22 +1,7 @@
 <template>
-  <div class="discoveryPlaylist" ref="playlistContainer" @scroll="handleScroll">
+  <div class="discoveryPlaylist">
     <!-- 歌单分类 -->
     <div class="category">
-      <!-- 所有类型选择菜单（可下拉选择） -->
-      <el-popover placement="bottom-start" :width="500" trigger="hover">
-        <template #reference>
-          <el-button class="currentSelect">
-            <span>{{ currentSelectedName }}</span>
-            <el-icon>
-              <ArrowRight />
-            </el-icon>
-          </el-button>
-        </template>
-        <el-button v-for="(tag, index) in playlistTag" :key="index" @click="changeCategory(index)"
-          style="margin: 0.2rem;" color='#ed5736' plain>
-          <span>{{ tag.name }}</span>
-        </el-button>
-      </el-popover>
       <!-- 热门标签 -->
       <div class="hotCategory">
         <el-button color="#ed5736" plain v-for="(h, index) in hotTag" :key="index" @click="changeHotCategory(index)">
@@ -27,9 +12,9 @@
     <div class="w-full" v-loading="loading">
       <!-- 歌单列表 -->
       <Playlist :playlists="playlists" :type="'playlist'" />
-      <!-- 加载更多提示 -->
-      <div v-if="!loading && hasMore" class="loading-more">
-        滚动到底部加载更多
+      <!-- 哨兵元素：进入视口时触发加载更多 -->
+      <div v-if="hasMore" ref="sentinelRef" class="loading-more">
+        {{ loadingMore ? '加载中...' : '滚动到底部加载更多' }}
       </div>
     </div>
 
@@ -40,39 +25,27 @@
 
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { playlistTagApi, hotTagApi, handpickApi } from '@/api/discovery'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { hotTagApi, handpickApi } from '@/api/discovery'
 import Playlist from '@/components/common/CPlaylist.vue'
-import { debounce } from 'lodash-es'
 import type { TagType, PlaylistType } from '@/api/types'
 
 const loading = ref(true)
 const loadingMore = ref(false)
-const playlistTag = ref<TagType[]>([])
 const hotTag = ref<TagType[]>([])
 const currentSelectedName = ref('华语')
 const playlists = ref<PlaylistType[]>([])
 const pageInfo = ref({
   currentPage: 0,
-  pageSize: 30,
+  pageSize: 20,
 })
 const hasMore = ref(true)
-const playlistContainer = ref<HTMLElement | null>(null)
-
-async function getPlaylistTag() {
-  const res = await playlistTagApi()
-  playlistTag.value = res.sub
-}
+const sentinelRef = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
 
 async function getHotTag() {
   const res = await hotTagApi()
   hotTag.value = res.tags
-}
-
-/** 切换标签时重置并重新加载 */
-function changeCategory(index: number) {
-  currentSelectedName.value = playlistTag.value[index].name
-  resetAndLoad()
 }
 
 function changeHotCategory(index: number) {
@@ -118,22 +91,38 @@ async function getHandpick(isReset = false) {
   }
 }
 
-// 滚动到底部检测,防抖处理
-const handleScroll = debounce(() => {
-  const container = playlistContainer.value
-  if (!container || loadingMore.value) return
+// IntersectionObserver：监听哨兵元素进入视口
+function setupObserver() {
+  observer?.disconnect()
+  if (!sentinelRef.value) return
 
-  const { scrollTop, scrollHeight, clientHeight } = container
-  // 当滚动到距离底部120px时加载更多
-  if (scrollHeight - scrollTop - clientHeight < 120 && hasMore.value) {
-    getHandpick()
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasMore.value && !loadingMore.value) {
+        getHandpick()
+      }
+    },
+    { rootMargin: '120px' },
+  )
+  observer.observe(sentinelRef.value)
+}
+
+// 当 hasMore 变为 true 时（切换分类 / 初始加载），哨兵重新挂载，重新观察
+watch(hasMore, (val) => {
+  if (val) {
+    nextTick(() => setupObserver())
   }
-}, 500)
+})
 
 // 初始化
 onMounted(async () => {
-  await Promise.all([getPlaylistTag(), getHotTag()])
-  await getHandpick(true)
+  await Promise.all([getHotTag(), getHandpick(true)])
+  setupObserver()
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+  observer = null
 })
 </script>
 

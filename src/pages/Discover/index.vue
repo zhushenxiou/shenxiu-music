@@ -21,7 +21,7 @@ const tabs = [
     path: '/discover/recommend',
   },
   {
-    label: '歌单',
+    label: '发现歌单',
     name: 'discoverPlaylist',
     path: '/discover/discoverPlaylist',
   },
@@ -31,7 +31,7 @@ const tabs = [
     path: '/discover/rank',
   },
   {
-    label: '歌手',
+    label: '发现歌手',
     name: 'discoverSinger',
     path: '/discover/discoverSinger',
   },

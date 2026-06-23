@@ -1,5 +1,12 @@
 import request from '../utils/request'
-import type { BannerType, PlaylistType, TagType, ToplistItemType, ArtistType, SongType } from './types'
+import type {
+  BannerType,
+  PlaylistType,
+  TagType,
+  ToplistItemType,
+  ArtistType,
+  SongType,
+} from './types'
 
 // ==================== 响应类型 ====================
 
@@ -64,10 +71,10 @@ export const hotTagApi = () => {
   return request<HotTagResponse>({ url: `/playlist/hot`, method: 'GET' })
 }
 
-/** 根据分类和分页获取歌单（网友精选碟） */
+/** 根据分类获取歌单（网友精选碟） */
 export const handpickApi = (tag: string, currentPage: number) => {
   return request<HandpickResponse>({
-    url: `/top/playlist?cat=${tag}&offset=${currentPage * 25}&limit=25`,
+    url: `/top/playlist?cat=${tag}&offset=${currentPage * 20}&limit=20`,
     method: 'GET',
   })
 }
