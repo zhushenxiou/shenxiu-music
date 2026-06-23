@@ -19,7 +19,9 @@
       <div class="flex flex-col flex-1 min-w-0">
         <!-- 标题 -->
         <div class="text-xl font-semibold mb-4">{{ videoDetails.name }}</div>
-        <div class="text-xs font-light mb-8 line-clamp-4">{{ videoDetails.desc || "暂无描述" }}</div>
+        <div class="text-xs font-light mb-8 line-clamp-4">
+          {{ videoDetails.desc || '暂无描述' }}
+        </div>
 
         <!-- 作者 -->
         <div class="flex flex-wrap mb-4">
@@ -45,14 +47,14 @@
         <!-- 操作按钮 -->
         <div class="flex">
           <div
-            class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
+            class="flex items-center border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
           >
-            <i class="iconfont mr-1">&#xe608;</i>赞
+            <IconLike class="mr-1" />赞
           </div>
           <div
-            class="border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
+            class="flex items-center border border-gray-200 px-4 py-1.5 rounded-full text-sm mr-4 cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
           >
-            <i class="iconfont mr-1">&#xe60c;</i>收藏
+            <IconCollect class="mr-1" />收藏
           </div>
         </div>
       </div>
@@ -68,6 +70,8 @@ import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { mvDetailsApi, mvUrlApi, type MVDetailsResponse } from '@/api/mv'
 import CComments from '@/components/common/CComments.vue'
+import IconLike from '@/assets/icon/IconLike.vue'
+import IconCollect from '@/assets/icon/IconCollect.vue'
 import VideoPlayer from '@/components/VideoPlayer.vue'
 
 const route = useRoute()

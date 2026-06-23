@@ -42,6 +42,7 @@ declare module 'vue' {
     Login: typeof import('./src/components/Login/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SvgIcon: typeof import('./src/components/common/SvgIcon.vue')['default']
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }

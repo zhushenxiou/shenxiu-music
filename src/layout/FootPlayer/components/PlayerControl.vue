@@ -5,33 +5,33 @@
     <div class="control">
       <!-- 循环模式 -->
       <div class="cycleMode" @click="switchLoopMode">
-        <i class="iconfont icon-xunhuanbofang" v-if="loopMode == 'loop'"></i>
-        <i class="iconfont icon-suijibofang" v-if="loopMode == 'random'"></i>
-        <i class="iconfont icon-danquxunhuan" v-if="loopMode == 'cycle'"></i>
+        <IconLoop v-if="loopMode == 'loop'" />
+        <IconRandom v-if="loopMode == 'random'" />
+        <IconSingleLoop v-if="loopMode == 'cycle'" />
       </div>
       <!-- 收藏 -->
       <div class="love">
-        <i class="iconfont icon-shoucang"></i>
+        <IconCollect />
       </div>
       <!-- 上一首 -->
       <div class="prev" @click="prevSong">
-        <i class="iconfont icon-shangyishoushangyige"></i>
+        <IconPrev />
       </div>
       <!-- 播放/暂停 -->
       <div class="isPlay" id="isPlay" @click="togglePlay">
-        <i v-if="!store.isPlaying" class="iconfont icon-bofang"></i>
-        <i v-else class="iconfont icon-zanting"></i>
+        <IconPlay v-if="!store.isPlaying" />
+        <IconPause v-else />
       </div>
       <!-- 下一首 -->
       <div class="next" @click="nextSong">
-        <i class="iconfont icon-xiayigexiayishou"></i>
+        <IconNext />
       </div>
       <!-- 音量控制 -->
       <div class="volume">
         <!-- 是否静音 -->
         <div class="mute" @click="toggleMute">
-          <i v-if="!isMute" class="iconfont icon-shengyin"></i>
-          <i v-else class="iconfont icon-shengyinjingyin"></i>
+          <IconVolume v-if="!isMute" />
+          <IconMute v-else />
         </div>
         <el-slider v-model="curVolume" @change="changeVolume" :show-tooltip="false" :max="100">
         </el-slider>
@@ -54,6 +54,16 @@ import { usePlayerStore } from '@/stores/player'
 import { msToMinSeconed } from '@/utils/time'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
+import IconLoop from '@/assets/icon/IconLoop.vue'
+import IconRandom from '@/assets/icon/IconRandom.vue'
+import IconSingleLoop from '@/assets/icon/IconSingleLoop.vue'
+import IconCollect from '@/assets/icon/IconCollect.vue'
+import IconPrev from '@/assets/icon/IconPrev.vue'
+import IconPlay from '@/assets/icon/IconPlay.vue'
+import IconPause from '@/assets/icon/IconPause.vue'
+import IconNext from '@/assets/icon/IconNext.vue'
+import IconVolume from '@/assets/icon/IconVolume.vue'
+import IconMute from '@/assets/icon/IconMute.vue'
 
 
 const store = usePlayerStore()
@@ -228,7 +238,7 @@ function timeupdate(e: any) {
     div {
       cursor: pointer;
 
-      i {
+      svg {
         font-size: 20px;
       }
     }
@@ -243,7 +253,7 @@ function timeupdate(e: any) {
       cursor: pointer;
       width: 6rem;
 
-      i {
+      svg {
         font-size: 24px;
         margin-right: 1rem;
       }

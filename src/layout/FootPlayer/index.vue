@@ -27,7 +27,7 @@
     <div class="right">
       <div class="playlist" @click="store.showPlaylist = !store.showPlaylist">
         <el-badge :value="store.playlist.length">
-          <i class="iconfont icon-24gf-playlistMusic4"></i>
+          <IconPlaylist />
         </el-badge>
         <!-- 抽屉 -->
         <el-drawer v-model="store.showPlaylist" :with-header="false" :append-to-body="true" :size="320">
@@ -45,6 +45,7 @@ import Playlist from './components/Playlist.vue'
 import PlayDetails from './components/PlayDetails.vue'
 import PlayerControl from './components/PlayerControl.vue'
 import { ElDrawer } from 'element-plus'
+import IconPlaylist from '@/assets/icon/IconPlaylist.vue'
 
 const store = usePlayerStore()
 </script>
@@ -102,7 +103,7 @@ const store = usePlayerStore()
       position: absolute;
       right: 2.5rem;
 
-      .el-badge i {
+      .el-badge svg {
         font-size: 20px;
       }
     }

@@ -12,8 +12,7 @@
           <span class="name">{{ singerInfo.name }}</span>
         </div>
         <div class="subscription">
-          <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe"><i
-              class="iconfont icon-shoucang"></i>{{ subscribed ? '取消关注' : '关注' }}</el-button>
+          <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe"><IconCollect class="mr-1" />{{ subscribed ? '取消关注' : '关注' }}</el-button>
         </div>
         <div class="count">
           <span class="songsCount">单曲数：{{ singerInfo.musicSize }}</span>
@@ -52,6 +51,7 @@ import { useRoute } from 'vue-router'
 import { singerDetailsApi, singerHotSongApi, singerAlbumApi, singerMVApi, singerSubscribeApi, singerUnsubscribeApi, type SingerDetailsResponse } from '@/api/singer'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CPlaylist from '@/components/common/CPlaylist.vue'
+import IconCollect from '@/assets/icon/IconCollect.vue'
 import CVideoList from '@/components/common/CMVList.vue'
 import { ElMessage } from 'element-plus'
 import type { SongType, AlbumType, MVType } from '@/api/types'

@@ -16,11 +16,11 @@
         <!-- 操作 -->
         <div class="mb-2">
           <el-button type="danger" @click="playAll" id="playAll">
-            <i class="iconfont icon-24gl-playCircle text-xl"></i>
+            <IconPlay class="text-xl" />
             <span class="ml-2">播放全部</span>
           </el-button>
           <el-button type="danger" plain>
-            <i class="iconfont icon-shoucang"></i>
+            <IconCollect />
             <span class="ml-2">收藏</span>
           </el-button>
         </div>
@@ -59,6 +59,8 @@ import { albumDetailsApi, type AlbumDetailsResponse } from '@/api/album'
 import { timestampToDate } from '@/utils/time'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CComments from '@/components/common/CComments.vue'
+import IconPlay from '@/assets/icon/IconPlay.vue'
+import IconCollect from '@/assets/icon/IconCollect.vue'
 import type { SongType } from '@/api/types'
 
 const route = useRoute()

@@ -13,7 +13,7 @@
         @click="selectMenu(menu)"
       >
         <!-- 图标 -->
-        <i class="iconfont" v-html="menu.icon"></i>
+        <component :is="iconMap[menu.icon]" />
         <!-- 菜单文字 -->
         <span>{{ menu.label }}</span>
       </el-menu-item>
@@ -26,14 +26,23 @@ import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { computed } from 'vue'
+import IconDiscover from '@/assets/icon/IconDiscover.vue'
+import IconVideo from '@/assets/icon/IconVideo.vue'
+import IconMusic from '@/assets/icon/IconMusic.vue'
+
+const iconMap: Record<string, any> = {
+  discover: IconDiscover,
+  video: IconVideo,
+  music: IconMusic,
+}
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
 const menus = [
-  { name: 'discover', label: '发现', icon: '&#xe609;', path: '/discover/recommend' },
-  { name: 'video', label: '视频', icon: '&#xe9f0;', path: '/video' },
-  { name: 'myMusic', label: '我的', icon: '&#xe601;', path: '/userDetails' },
+  { name: 'discover', label: '发现', icon: 'discover', path: '/discover/recommend' },
+  { name: 'video', label: '视频', icon: 'video', path: '/video' },
+  { name: 'myMusic', label: '我的', icon: 'music', path: '/userDetails' },
 ]
 
 // 动态计算当前激活的菜单
@@ -106,7 +115,7 @@ function selectMenu(menu: { path: string; name: string }) {
     color: #333;
     transition: background 0.2s ease;
 
-    i {
+    svg {
       margin-right: 12px;
       font-size: 18px;
     }
