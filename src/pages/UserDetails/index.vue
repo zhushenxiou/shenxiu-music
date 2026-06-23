@@ -1,55 +1,59 @@
 <template>
   <!-- 用户详情页 -->
-  <div class="userDetails">
+  <div>
     <!-- 用户信息 -->
-    <div class="userInfo" v-loading="isLoading">
-      <div class="img">
-        <img :src="userInfo.avatarUrl" alt="" />
+    <div class="flex px-4 w-full mb-8" v-loading="isLoading">
+      <div class="h-48 w-48 rounded-full overflow-hidden shrink-0">
+        <el-image :src="userInfo.avatarUrl" fit="cover" class="w-full h-full" />
       </div>
-      <div class="text">
+      <div class="ml-8 flex-1 min-w-0">
         <!-- 基本信息 -->
-        <div class="basic">
-          <div class="nickname">{{ userInfo.nickname }}</div>
-          <div class="level">Lv.{{ userInfo.level }}</div>
+        <div class="flex items-center pl-4">
+          <div class="text-2xl font-semibold mr-4">{{ userInfo.nickname }}</div>
+          <div
+            class="text-[13px] w-[2.2rem] h-[1.2rem] leading-[1.2rem] rounded-[10px] text-center bg-[#ccc]"
+          >
+            Lv.{{ userInfo.level }}
+          </div>
         </div>
         <el-divider />
         <!-- 用户数据 -->
-        <div class="userData">
-          <div class="message clikable">
-            <div class="count">{{ userInfo.eventCount }}</div>
-            <div class="tag">动态</div>
+        <div class="flex mb-4">
+          <div
+            class="border-r border-[#ddd] text-center px-3 cursor-pointer hover:text-[#ec4141] transition-transform"
+            @click="toFollows"
+          >
+            <div class="text-md font-bold">关注 {{ userInfo.follows }}</div>
           </div>
-          <div class="attention clikable" @click="toFollows">
-            <div class="count">{{ userInfo.follows }}</div>
-            <div class="tag">关注</div>
+          <div
+            class="text-center px-3 cursor-pointer hover:text-[#ec4141] transition-transform"
+            @click="toFolloweds"
+          >
+            <div class="text-md font-bold">粉丝 {{ userInfo.followeds }}</div>
           </div>
-          <div class="fans clikable" @click="toFolloweds">
-            <div class="count">{{ userInfo.followeds }}</div>
-            <div class="tag">粉丝</div>
-          </div>
+        </div>
+        <!-- 简介 -->
+        <div class="pl-2 text-md mb-2">
+          简介：<span class="text-[#444]">{{ userInfo.signature }} </span>
+          <span v-if="!userInfo.signature" class="text-[#444]">暂无个人介绍</span>
         </div>
         <!-- 用户 id -->
-        <div class="uid">
-          用户ID：<span>{{ userInfo.userId }}</span>
-        </div>
-        <!-- 用户个人介绍 -->
-        <div class="description">
-          个人介绍：<span>{{ userInfo.signature }} </span>
-          <span v-if="!userInfo.signature">暂无个人介绍</span>
+        <div class="pl-2 text-xs mb-2">
+          用户ID：<span class="text-[#444]">{{ userInfo.userId }}</span>
         </div>
       </div>
     </div>
     <!-- 创建的歌单 -->
-    <div class="createPlaylist" v-if="createdPlaylist.length">
-      <div class="title">
-        {{ userInfo.nickname }}创建的歌单({{ createdPlaylist.length }})
+    <div v-if="createdPlaylist.length" class="mb-4">
+      <div class="text-lg font-semibold ml-2 p-2">
+        {{ pronoun }}创建的歌单({{ createdPlaylist.length }})
       </div>
       <CPlaylist :playlists="createdPlaylist" />
     </div>
     <!-- 收藏的歌单 -->
-    <div class="subscribedPlaylist" v-if="subscribedPlaylist.length">
-      <div class="title">
-        {{ userInfo.nickname }}收藏的歌单({{ subscribedPlaylist.length }})
+    <div v-if="subscribedPlaylist.length" class="mb-4">
+      <div class="text-lg font-semibold ml-2 p-2">
+        {{ pronoun }}收藏的歌单({{ subscribedPlaylist.length }})
       </div>
       <CPlaylist :playlists="subscribedPlaylist" />
     </div>
@@ -67,8 +71,14 @@ import type { UserProfileType, PlaylistType } from '@/api/types'
 const route = useRoute()
 const router = useRouter()
 
+const userStore = useUserStore()
+
 const id = computed(() => {
-  return route.params.id || useUserStore().userInfo.userId
+  return route.params.id || userStore.userInfo.userId
+})
+
+const pronoun = computed(() => {
+  return String(id.value) === String(userStore.userInfo.userId) ? '我' : 'TA'
 })
 
 const isLoading = ref(true)
@@ -117,98 +127,3 @@ onMounted(() => {
   getUserDetails()
 })
 </script>
-
-<style lang="less">
-.userDetails {
-  .userInfo {
-    display: flex;
-    padding: 0 1rem;
-    width: 100%;
-    margin-bottom: 2rem;
-
-    .img img {
-      height: 12rem;
-      width: 12rem;
-      border-radius: 50%;
-    }
-
-    .text {
-      margin-left: 2rem;
-      width: 100%;
-
-      .basic {
-        display: flex;
-        align-items: center;
-        padding-left: 1rem;
-
-        .nickname {
-          font-size: 24px;
-          font-weight: 600;
-          margin-right: 1rem;
-        }
-
-        .level {
-          font-size: 13px;
-          width: 2.2rem;
-          height: 1.2rem;
-          line-height: 1.2rem;
-          border-radius: 10px;
-          text-align: center;
-          background-color: #ccc;
-        }
-      }
-
-      .userData {
-        display: flex;
-        margin-bottom: 1rem;
-
-        .clikable {
-
-          &:hover {
-            color: #ec4141;
-            transform: scale(1.05);
-          }
-        }
-
-        &>div {
-          border-right: 1px solid #ddd;
-          text-align: center;
-          padding: 0 2rem;
-          cursor: pointer;
-
-          .count {
-            font-size: 18px;
-          }
-
-          .tag {
-            font-size: 12px;
-          }
-        }
-      }
-
-      .uid,
-      .description {
-        padding-left: 0.5rem;
-        font-size: 13px;
-        margin-bottom: 0.5rem;
-
-        span {
-          color: #444;
-        }
-      }
-    }
-  }
-
-  .createPlaylist,
-  .subscribedPlaylist {
-    margin-bottom: 1rem;
-
-    .title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-left: 0.5rem;
-      padding: 0.5rem;
-    }
-  }
-}
-</style>
