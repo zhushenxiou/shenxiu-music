@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ArrowRight } from '@element-plus/icons-vue'
 import { bannerApi, personalizedPlaylistApi } from '@/api/discovery'
 import Playlist from '@/components/common/CPlaylist.vue'
 import { useRouter } from 'vue-router'
