@@ -17,6 +17,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "@types/video.js": "^7.3.58",
     "axios": "^1.8.3",
+    "colorthief": "^3.3.1",
     "element-plus": "^2.9.6",
     "lodash-es": "^4.17.21",
     "node-ssh": "^13.2.1",

@@ -9,7 +9,8 @@
     >
       <!-- 图片部分 -->
       <div class="w-full aspect-square overflow-hidden">
-        <el-image :src="optimizeImageUrl(item.picUrl, 250, 250)" class="w-full h-full object-cover" lazy>
+        <el-image :src="optimizeImageUrl(item.picUrl, 250, 250)" class="w-full h-full object-cover"
+          lazy crossorigin="anonymous" @load="(e: Event) => onImageLoad(item.id, e)">
           <template #placeholder>
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
               加载中<span class="dot">...</span>
@@ -18,8 +19,15 @@
         </el-image>
       </div>
 
-      <!-- 歌单介绍 -->
-      <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-2">
+      <!-- 歌单介绍：背景色取封面主题色 -->
+      <div
+        class="text-white p-2"
+        :style="{
+          background: themeColors[item.id]
+            ? `linear-gradient(to right, ${themeColors[item.id]}, rgba(0,0,0,0.85))`
+            : 'linear-gradient(to right, #1f2937, #111827)',
+        }"
+      >
         <span class="text-sm font-medium line-clamp-2 block h-[2.5rem]">{{ item.name }}</span>
       </div>
 
@@ -32,12 +40,25 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatPlayCount } from '@/utils/format'
-import { optimizeImageUrl } from '@/utils/img'
+import { optimizeImageUrl, extractColorFromImage } from '@/utils/img'
 
 const router = useRouter()
 const { playlists, type } = defineProps(['playlists', 'type'])
+
+/** 各歌单/专辑的主题色缓存，key 为 item.id */
+const themeColors = ref<Record<number, string>>({})
+
+/** el-image 加载完成时提取主题色，直接复用已显示的图片，无二次下载 */
+async function onImageLoad(id: number, e: Event) {
+  const img = e.target as HTMLImageElement
+  const color = await extractColorFromImage(img)
+  if (color) {
+    themeColors.value = { ...themeColors.value, [id]: color }
+  }
+}
 
 function toDetailsPage(id: number) {
   // 传入album跳转albumDetails，否则都跳转playlistDetails

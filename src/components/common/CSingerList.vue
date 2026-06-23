@@ -4,13 +4,21 @@
       class="relative cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-105"
       @click="toSingerDetails(item.id)">
       <div class="w-full aspect-square overflow-hidden">
-        <el-image :src="optimizeImageUrl(item.picUrl, 250, 250)" fit="cover" class="w-full h-full" lazy>
+        <el-image :src="optimizeImageUrl(item.picUrl, 250, 250)" fit="cover" class="w-full h-full"
+          lazy crossorigin="anonymous" @load="(e: Event) => onImageLoad(item.id, e)">
           <template #placeholder>
             <div class="image-slot">加载中<span class="dot">...</span></div>
           </template>
         </el-image>
       </div>
-      <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-2">
+      <div
+        class="text-white p-2"
+        :style="{
+          background: themeColors[item.id]
+            ? `linear-gradient(to right, ${themeColors[item.id]}, rgba(0,0,0,0.85))`
+            : 'linear-gradient(to right, #1f2937, #111827)',
+        }"
+      >
         <span class="block h-[1.5rem] text-center text-sm">{{ item.name }}</span>
       </div>
     </div>
@@ -18,12 +26,25 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { optimizeImageUrl } from '@/utils/img'
+import { optimizeImageUrl, extractColorFromImage } from '@/utils/img'
 
 const { singerlist } = defineProps(['singerlist'])
 
 const router = useRouter()
+
+/** 各歌手的主题色缓存，key 为 item.id */
+const themeColors = ref<Record<number, string>>({})
+
+/** el-image 加载完成时提取主题色，直接复用已显示的图片，无二次下载 */
+async function onImageLoad(id: number, e: Event) {
+  const img = e.target as HTMLImageElement
+  const color = await extractColorFromImage(img)
+  if (color) {
+    themeColors.value = { ...themeColors.value, [id]: color }
+  }
+}
 
 function toSingerDetails(id: number) {
   router.push({

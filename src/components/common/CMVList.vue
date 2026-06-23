@@ -19,7 +19,7 @@
         </template>
       </el-image>
       <div class="mt-2">
-        <span class="text-sm font-medium line-clamp-2 block h-[2.5rem]">{{ video.name }}</span>
+        <span class="text-sm font-medium line-clamp-1">{{ video.name }}</span>
       </div>
     </div>
   </div>
