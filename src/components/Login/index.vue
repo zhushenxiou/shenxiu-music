@@ -116,9 +116,9 @@ async function getQRCodeBase(key: string) {
   QRCodeBase.value = res.data.qrimg
 }
 
-//检测二维码状态是否过期
+/** 检测二维码扫描状态 */
 async function checkQRCodeState(key: string) {
-  const res: any = await checkQRCodeStateApi(key)
+  const res = await checkQRCodeStateApi(key)
   // 如果状态码改变了
   if (res.code !== QRCodeStateCode.value) {
     console.log(res)

@@ -49,19 +49,19 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import { toplistApi } from '@/api/discovery'
+import type { ToplistItemType } from '@/api/types'
 
 const router = useRouter()
 
 const loading = ref(true)
-const officialToplist = ref()
-const globalToplist = ref()
+const officialToplist = ref<ToplistItemType[]>([])
+const globalToplist = ref<ToplistItemType[]>([])
 
 async function getToplist() {
   loading.value = true
-  const res: any = await toplistApi()
-  // 前4个是官方榜,后面是全球榜
+  const res = await toplistApi()
   officialToplist.value = res.list.slice(0, 4)
   globalToplist.value = res.list.slice(4)
   loading.value = false

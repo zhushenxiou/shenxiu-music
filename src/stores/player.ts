@@ -1,21 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { songUrlApi, lyricApi } from '@/api/song'
+import type { SongType } from '@/api/types'
 
 export const usePlayerStore = defineStore('player', () => {
-  // 播放列表
-  const playlist = ref<any>([])
+  /** 播放列表 */
+  const playlist = ref<SongType[]>([])
   // 当前播放下标
   const index = ref(0)
-  // 当前正在播放音乐信息
-  const curSongInfo = ref({
+  /** 当前播放歌曲信息 */
+  const curSongInfo = ref<SongType>({
     id: 0,
     name: '暂无歌曲',
     // 专辑
     al: {
       id: 0,
       name: '',
-      picUrl: 'https://ts1.cn.mm.bing.net/th/id/R-C.d2f9f4128e684ba537fe9efaf92f1bfd?rik=makKOA%2fy5qn6fA&riu=http%3a%2f%2fwww.kuaipng.com%2fUploads%2fpic%2fw%2f2021%2f04-21%2f99518%2fwater_99518_698_698_.png&ehk=c%2bb01RyizJwmfF4speWlE1bpkSRCtyxWZlU%2f6TPecHk%3d&risl=&pid=ImgRaw&r=0',
+      picUrl:
+        'https://ts1.cn.mm.bing.net/th/id/R-C.d2f9f4128e684ba537fe9efaf92f1bfd?rik=makKOA%2fy5qn6fA&riu=http%3a%2f%2fwww.kuaipng.com%2fUploads%2fpic%2fw%2f2021%2f04-21%2f99518%2fwater_99518_698_698_.png&ehk=c%2bb01RyizJwmfF4speWlE1bpkSRCtyxWZlU%2f6TPecHk%3d&risl=&pid=ImgRaw&r=0',
     },
     // 艺术家/作者
     ar: [
@@ -72,7 +74,7 @@ export const usePlayerStore = defineStore('player', () => {
     curSongInfo.value = playlist.value[index.value]
 
     // 获取歌曲播放URL
-    const [songUrlRes, lyricRes]: any = await Promise.all([
+    const [songUrlRes, lyricRes] = await Promise.all([
       songUrlApi(curSongInfo.value.id),
       lyricApi(curSongInfo.value.id),
     ])
@@ -97,6 +99,5 @@ export const usePlayerStore = defineStore('player', () => {
     showPlaylist,
     showSongDetails,
     updateCurSong,
-    formatLyric // 若组件不需要调用，可省略暴露
   }
 })

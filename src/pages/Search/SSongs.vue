@@ -19,29 +19,28 @@ import { useRoute } from 'vue-router'
 import CSonglist from '@/components/common/CSonglist.vue'
 import { searchApi } from '@/api/search'
 import CPagination from '@/components/common/CPagination.vue'
+import type { SongType } from '@/api/types'
+
 const route = useRoute()
 
-const keywords = computed(() => {
-  return route.params.keywords
-})
+const keywords = computed(() => route.params.keywords as string)
 
 const isLoading = ref(true)
 
 const pageInfo = reactive({
   pageSize: 30,
-  curPage: 1, // 当前页
-  total: 0, // 总页数
+  curPage: 1,
+  total: 0,
 })
 
-const songlist = ref()
+const songlist = ref<SongType[]>([])
 
 async function getSearchSongs() {
   isLoading.value = true
-  const res: any = await searchApi(keywords.value, 1, (pageInfo.curPage - 1) * 30)
-  // 更新歌曲数量
-  pageInfo.total = res.result.songCount
-  // 更新歌曲
-  songlist.value = res.result.songs
+  const res = await searchApi(keywords.value, 1, (pageInfo.curPage - 1) * 30)
+  const data = res as { result: { songCount: number; songs: SongType[] } }
+  pageInfo.total = data.result.songCount
+  songlist.value = data.result.songs
   isLoading.value = false
 }
 

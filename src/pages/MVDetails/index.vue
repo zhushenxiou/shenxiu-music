@@ -46,13 +46,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { mvDetailsApi, mvUrlApi, reletedMvApi } from '@/api/mv'
+import { mvDetailsApi, mvUrlApi, reletedMvApi, type MVDetailsResponse } from '@/api/mv'
 import CComments from '@/components/common/CComments.vue'
 import CReletedMV from './components/ReletedMV.vue'
-// 引入封装的video.js组件
 import VideoPlayer from '@/components/VideoPlayer.vue'
+import type { MVType } from '@/api/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -60,43 +60,40 @@ const router = useRouter()
 const id = computed(() => route.params.id)
 const isLoading = ref(true)
 
-// 视频详细信息
-const videoDetails = ref<any>({
+/** 视频详细信息 */
+const videoDetails = ref<MVDetailsResponse['data']>({
   name: '',
   cover: '',
   artists: [],
   publishTime: '',
-  playCount: 0
+  playCount: 0,
 })
 
-// 视频清晰度资源url列表
+/** 视频清晰度资源url列表 */
 const sources = ref<Array<{ definition: string; url: string }>>([
   { definition: '1080P', url: '' },
   { definition: '720P', url: '' },
-  { definition: '480P', url: '' }
+  { definition: '480P', url: '' },
 ])
 
-// 相关推荐mv
-const reletedMV = ref<any>([])
+/** 相关推荐 MV */
+const reletedMV = ref<MVType[]>([])
 
 async function getData() {
   isLoading.value = true
-  const [details, reletedRes, urlRes1080, urlRes720, urlRes480]: any = await Promise.all([
+  const [details, reletedRes, urlRes1080, urlRes720, urlRes480] = await Promise.all([
     mvDetailsApi(id.value),
     reletedMvApi(id.value),
     mvUrlApi(id.value, 1080),
     mvUrlApi(id.value, 720),
     mvUrlApi(id.value, 480),
   ])
-  // 视频详情数据
   videoDetails.value = details.data
-  // 相关推荐mv数据
   reletedMV.value = reletedRes.mvs
-  // 更新清晰度列表地址
   sources.value = [
     { definition: '1080P', url: urlRes1080.data.url },
     { definition: '720P', url: urlRes720.data.url },
-    { definition: '480P', url: urlRes480.data.url }
+    { definition: '480P', url: urlRes480.data.url },
   ]
   console.log(sources.value)
   isLoading.value = false
@@ -105,9 +102,11 @@ async function getData() {
 function toSingerDetails(id: number) {
   router.push({
     name: 'singerDetails',
-    params: { id }
+    params: { id },
   })
 }
 
-getData()
+onMounted(() => {
+  getData()
+})
 </script>

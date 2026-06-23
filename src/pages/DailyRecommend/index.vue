@@ -30,25 +30,29 @@ import { ref } from "vue"
 import { dailyStarPlaylistApi, dailyStarSongsApi } from "@/api/discovery"
 import CSonglist from "../../components/common/CSonglist.vue"
 import CPlaylist from '../../components/common/CPlaylist.vue'
+import type { SongType, PlaylistType } from '@/api/types'
+import { onMounted } from "vue"
 
 const isLoading = ref(true)
 
 const selectedTag = ref('dailySongs')
 
-const dailySongs = ref()
-const dailyPlaylist = ref()
+const dailySongs = ref<SongType[]>([])
+const dailyPlaylist = ref<PlaylistType[]>([])
 
-// 获取每日推荐数据
+/** 获取每日推荐数据 */
 async function getDailyData() {
   isLoading.value = true
   const songs = await dailyStarSongsApi()
   dailySongs.value = songs.data.dailySongs
-  const playlist: any = await dailyStarPlaylistApi()
+  const playlist = await dailyStarPlaylistApi()
   dailyPlaylist.value = playlist.recommend
   isLoading.value = false
 }
 
-getDailyData()
+onMounted(() => {
+  getDailyData()
+})
 </script>
 
 <style lang="less" scoped>

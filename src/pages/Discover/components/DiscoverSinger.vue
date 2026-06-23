@@ -5,8 +5,12 @@
       <!-- 地区分类 -->
       <div class="area">
         <div class="opts">
-          <div :class="{ opt: true, selected: area.key === condition.areaKey }" v-for="(area, i) in category.area"
-            :key="i" @click="switchOpt(area.key, 'area')">
+          <div
+            :class="{ opt: true, selected: area.key === condition.areaKey }"
+            v-for="(area, i) in category.area"
+            :key="i"
+            @click="switchOpt(area.key, 'area')"
+          >
             <span>{{ area.name }}</span>
           </div>
         </div>
@@ -14,8 +18,12 @@
       <!-- 性别分类 -->
       <div class="type">
         <div class="opts">
-          <div :class="{ opt: true, selected: type.key === condition.typeKey }" v-for="(type, i) in category.type"
-            :key="i" @click="switchOpt(type.key, 'type')">
+          <div
+            :class="{ opt: true, selected: type.key === condition.typeKey }"
+            v-for="(type, i) in category.type"
+            :key="i"
+            @click="switchOpt(type.key, 'type')"
+          >
             <span>{{ type.name }}</span>
           </div>
         </div>
@@ -23,8 +31,13 @@
       <!-- 首字母分类 -->
       <div class="initial">
         <div class="opts">
-          <div :class="{ opt: true, selected: initial.key === condition.initialKey }" id="initial"
-            v-for="(initial, i) in category.initial" :key="i" @click="switchOpt(initial.key, 'initial')">
+          <div
+            :class="{ opt: true, selected: initial.key === condition.initialKey }"
+            id="initial"
+            v-for="(initial, i) in category.initial"
+            :key="i"
+            @click="switchOpt(initial.key, 'initial')"
+          >
             <span>{{ initial.name }}</span>
           </div>
         </div>
@@ -34,7 +47,7 @@
     <CSingerList :singerlist="singerlist" v-loading="isLoading" />
     <!-- 是否继续加载 -->
     <div class="continueLoading">
-      <el-button color='#ed5736' plain @click="continueLoading">点击查看更多</el-button>
+      <el-button color="#ed5736" plain @click="continueLoading">点击查看更多</el-button>
     </div>
   </div>
 </template>
@@ -45,43 +58,52 @@ import { staticSingerCategory } from '../static/useStaticData'
 import { singerlistApi } from '@/api/discovery'
 import { ElMessage } from 'element-plus'
 import CSingerList from '@/components/common/CSingerList.vue'
+import type { ArtistType } from '@/api/types'
+
 const category = staticSingerCategory
 
 const isLoading = ref(true)
-// 关于分类获取歌手的条件
-const condition = reactive({
+/** 歌手分类查询条件 */
+const condition = reactive<{
+  areaKey: number
+  typeKey: number
+  initialKey: string
+  count: number
+  limit: number
+  isMore: boolean
+}>({
   areaKey: -1,
   typeKey: -1,
   initialKey: '-1',
-  // 当前加载数据的次数（配合实现懒加载）
   count: 1,
-  // 每次加载30个
   limit: 30,
-  // 是否还有更多数据
   isMore: false,
 })
-// 歌手列表信息
-const singerlist = ref<any>([])
+/** 歌手列表 */
+const singerlist = ref<ArtistType[]>([])
 
 async function getSingerlist() {
   isLoading.value = true
-  const res: any = await singerlistApi(
-    condition.areaKey, condition.typeKey, condition.initialKey,
-    (condition.count - 1) * condition.limit, condition.limit
+  const res = await singerlistApi(
+    condition.areaKey,
+    condition.typeKey,
+    condition.initialKey,
+    (condition.count - 1) * condition.limit,
+    condition.limit,
   )
   singerlist.value.push(...res.artists)
   condition.isMore = res.more
   isLoading.value = false
 }
 
-// 切换条件
-function switchOpt(key: any, opt: string) {
-  if (opt == 'area') {
-    condition.areaKey = key
-  } else if (opt == 'type') {
-    condition.typeKey = key
+/** 切换分类条件 */
+function switchOpt(key: number | string, opt: string) {
+  if (opt === 'area') {
+    condition.areaKey = Number(key)
+  } else if (opt === 'type') {
+    condition.typeKey = Number(key)
   } else {
-    condition.initialKey = key
+    condition.initialKey = String(key)
   }
   // 清空
   singerlist.value = []
@@ -153,6 +175,5 @@ getSingerlist()
     justify-content: center;
     padding: 0.5rem;
   }
-
 }
 </style>

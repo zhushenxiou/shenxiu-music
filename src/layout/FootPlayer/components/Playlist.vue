@@ -24,20 +24,21 @@
 
 <script setup lang="ts">
 import { usePlayerStore } from '@/stores/player'
+import type { SongType } from '@/api/types'
+
 const store = usePlayerStore()
 
-// 为 element-Plus 表格的行属性中添加索引
-function addIndex({ row, rowIndex }: { row: any, rowIndex: number }) {
-  //把每一行的索引放进row
+/** 为 Element Plus 表格行注入索引并高亮当前播放 */
+function addIndex({ row, rowIndex }: { row: SongType; rowIndex: number }) {
   row.index = rowIndex
-  // 添加样式
-  if (rowIndex == store.index) {
+  if (rowIndex === store.index) {
     return 'active'
   }
 }
-function playSong(row: any) {
+
+function playSong(row: SongType) {
   store.isPlaying = false
-  store.index = row.index
+  store.index = row.index!
   store.updateCurSong()
 }
 

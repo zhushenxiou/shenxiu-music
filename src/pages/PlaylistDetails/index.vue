@@ -75,6 +75,7 @@ import { usePlayerStore } from '@/stores/player'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CComments from '@/components/common/CComments.vue'
 import { ElMessage } from 'element-plus'
+import type { PlaylistType, SongType } from '@/api/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -87,19 +88,27 @@ const id = computed(() => route.params.id)
 const selectedTag = ref('songs')
 
 // 歌单详情
-const playlistDetails: any = ref({
+const playlistDetails = ref<PlaylistType>({
+  id: 0,
+  name: '',
   coverImgUrl: '',
-  creator: ''
+  creator: { userId: 0, nickname: '' },
+  trackCount: 0,
+  playCount: 0,
+  description: '',
+  createTime: 0,
+  subscribed: false,
+  trackIds: [],
 })
-// 歌单中的音乐
-const songlist = ref()
+/** 歌单中的歌曲 */
+const songlist = ref<SongType[]>([])
 
 const subscribed = ref(false)
 
 // 根据id获取歌单详情
 async function getPlaylistDetails() {
   isLoading.value = true
-  const res: any = await playlistDetailsApi(id.value)
+  const res = await playlistDetailsApi(id.value)
   // 歌单信息
   playlistDetails.value = res.playlist
   // 收藏状态
@@ -130,11 +139,11 @@ async function toggleSubscribe() {
 
 // 根据trackIds查询每曲音乐详情
 async function getSongDetails() {
-  const ids: any = []
-  playlistDetails.value.trackIds.forEach((trackId: { id: number }) => {
+  const ids: number[] = []
+  playlistDetails.value.trackIds.forEach((trackId) => {
     ids.push(trackId.id)
   })
-  const res: any = await songDetailsApi(ids)
+  const res = await songDetailsApi(ids.join(','))
   songlist.value = res.songs
 }
 

@@ -2,7 +2,7 @@
   <!-- 搜索MV页 -->
   <div class="searchMV">
     <!-- MV总数 -->
-    <div class="count">找到 {{ pageInfo.total }} 节 MV</div>
+    <div class="count">找到 {{ pageInfo.total }} 节 MVType</div>
     <!-- MV展示 -->
     <div class="mvlist" v-loading="isLoading">
       <CVideoList :video-data="mvs" />
@@ -18,28 +18,29 @@ import { useRoute } from 'vue-router'
 import { searchApi } from '@/api/search'
 import CPagination from '@/components/common/CPagination.vue'
 import CVideoList from '@/components/common/CMVList.vue'
+import type { MVType } from '@/api/types'
+
 const route = useRoute()
 
-const keywords = computed(() => {
-  return route.params.keywords
-})
+const keywords = computed(() => route.params.keywords as string)
 
 const isLoading = ref(true)
 
 const pageInfo = reactive({
   pageSize: 20,
-  curPage: 1, // 当前页
-  total: 0, // 总页数
+  curPage: 1,
+  total: 0,
 })
 
-// 存储mvs
-const mvs = ref()
+/** MV 列表 */
+const mvs = ref<MVType[]>([])
 
 async function getSearchMV() {
   isLoading.value = true
-  const res: any = await searchApi(keywords.value, 1004, (pageInfo.curPage - 1) * 24, pageInfo.pageSize)
-  pageInfo.total = res.result.mvCount
-  mvs.value = res.result.mvs
+  const res = await searchApi(keywords.value, 1004, (pageInfo.curPage - 1) * 24, pageInfo.pageSize)
+  const data = res as { result: { mvCount: number; mvs: MVType[] } }
+  pageInfo.total = data.result.mvCount
+  mvs.value = data.result.mvs
   isLoading.value = false
 }
 

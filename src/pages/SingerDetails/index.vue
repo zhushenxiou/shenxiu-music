@@ -32,7 +32,7 @@
       <el-tab-pane label="专辑" name="album">
         <CPlaylist :playlists="albums" :type="'album'" />
       </el-tab-pane>
-      <el-tab-pane label="MV" name="mv">
+      <el-tab-pane label="MVType" name="mv">
         <CVideoList :video-data="mvlist" />
         <div class="continueLoading">
           <el-button color='#ed5736' plain @click="continueLoading">点击查看更多</el-button>
@@ -49,69 +49,60 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { singerDetailsApi, singerHotSongApi, singerAlbumApi, singerMVApi, singerSubscribeApi, singerUnsubscribeApi } from '@/api/singer'
+import { singerDetailsApi, singerHotSongApi, singerAlbumApi, singerMVApi, singerSubscribeApi, singerUnsubscribeApi, type SingerDetailsResponse } from '@/api/singer'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CPlaylist from '@/components/common/CPlaylist.vue'
 import CVideoList from '@/components/common/CMVList.vue'
 import { ElMessage } from 'element-plus'
+import type { SongType, AlbumType, MVType } from '@/api/types'
 
 const route = useRoute()
 
-const id = computed(() => {
-  return route.params.id
-})
+const id = computed(() => route.params.id)
 
 const isLoading = ref(true)
-// 选择的标签
+/** 选择的标签 */
 const selectedTag = ref('hotSongs')
 
-// 歌手信息
-const singerInfo = ref({
+/** 歌手信息 */
+const singerInfo = ref<SingerDetailsResponse['data']['artist']>({
   cover: '',
   name: '',
-  musicSize: '',
-  albumSize: '',
-  mvSize: '',
-  briefDesc: ''
+  musicSize: 0,
+  albumSize: 0,
+  mvSize: 0,
+  briefDesc: '',
 })
 
-// 歌手热门单曲
-const songlist = ref()
-// 歌手专辑
-const albums = ref()
-// 歌手MV列表
-const mvlist: any = ref([])
-// 歌手是否关注
+/** 歌手热门单曲 */
+const songlist = ref<SongType[]>([])
+/** 歌手专辑 */
+const albums = ref<AlbumType[]>([])
+/** 歌手MV列表 */
+const mvlist = ref<MVType[]>([])
+/** 歌手是否关注 */
 const subscribed = ref(false)
 
-// 懒加载
+/** 懒加载 */
 const condition = reactive({
-  // 当前加载数据的次数（配合实现懒加载）
   count: 1,
-  // 每次加载24个
   limit: 24,
-  // 是否还有更多数据
-  isMore: false
+  isMore: false,
 })
 
-// 获取数据
+/** 获取数据 */
 async function getData() {
   isLoading.value = true
 
-  // 使用Promise.all并行获取歌手详情、热门单曲和专辑
-  const [details, hotSongs, albumRes]: any = await Promise.all([
+  const [details, hotSongs, albumRes] = await Promise.all([
     singerDetailsApi(id.value),
     singerHotSongApi(id.value),
-    singerAlbumApi(id.value)
+    singerAlbumApi(id.value),
   ])
 
-  // 歌手信息
   singerInfo.value = details.data.artist
-  // 歌手热门单曲
   songlist.value = hotSongs.songs
-  // 歌手专辑
   albums.value = albumRes.hotAlbums
-  // 该歌手是否关注
   subscribed.value = details.data.user.followed
 
   isLoading.value = false
@@ -119,11 +110,11 @@ async function getData() {
   getSingerMV()
 }
 
-// 获取歌手MV
+/** 获取歌手 MV */
 async function getSingerMV() {
-  const mvRes: any = await singerMVApi(id.value, (condition.count - 1) * condition.limit, condition.limit)
-  mvRes.mvs.forEach((item: any) => {
-    item.cover = item.imgurl
+  const mvRes = await singerMVApi(id.value, (condition.count - 1) * condition.limit, condition.limit)
+  mvRes.mvs.forEach((item) => {
+    item.cover = item.imgurl || item.cover
   })
   mvlist.value.push(...mvRes.mvs)
   condition.isMore = mvRes.hasMore

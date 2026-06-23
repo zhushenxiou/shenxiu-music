@@ -29,43 +29,38 @@ import { bannerApi, personalizedPlaylistApi } from '@/api/discovery'
 import Playlist from '@/components/common/CPlaylist.vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import type { BannerType, PlaylistType } from '@/api/types'
+
 const router = useRouter()
 
 const isLoading = ref(true)
-const banners = ref()
-// 推荐歌单列表
-const playlists = ref()
+const banners = ref<BannerType[]>([])
+/** 推荐歌单列表 */
+const playlists = ref<PlaylistType[]>([])
 
 async function getData() {
   isLoading.value = true
-  // 获取banner数据
-  const bannersRes: any = await bannerApi()
+  const bannersRes = await bannerApi()
   banners.value = bannersRes.banners
-  // 获取推荐歌单数据
-  const playlistRes: any = await personalizedPlaylistApi()
+  const playlistRes = await personalizedPlaylistApi()
   playlists.value = playlistRes.result
   isLoading.value = false
 }
 
-// 处理点击banner
-function handleBanner(banner: any) {
+/** 处理点击 banner */
+function handleBanner(banner: BannerType) {
   console.log(banner)
-  // 歌单
-  if (banner.targetType == 1000) {
+  if (banner.targetType === 1000) {
     router.push({
       name: 'playlistDetails',
-      params: { id: banner.targetId }
+      params: { id: banner.targetId },
     })
-  }
-  // 专辑
-  else if (banner.targetType == 10) {
+  } else if (banner.targetType === 10) {
     router.push({
       name: 'albumDetails',
-      params: { id: banner.targetId }
+      params: { id: banner.targetId },
     })
-  }
-  // 新歌首发/电台
-  else {
+  } else {
     ElMessage.info('特殊Banner,暂时无法处理')
   }
 }

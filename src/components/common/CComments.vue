@@ -51,28 +51,28 @@ import {
   mvCommentApi,
 } from '@/api/comment'
 import { optimizeImageUrl } from '@/utils/img'
+import type { CommentType } from '@/api/types'
 
 const router = useRouter()
 
-const { type, id } = defineProps(['type', 'id'])
+const props = defineProps<{ type: string; id: string | string[] }>()
 
+/** 热门评论 */
+const hotComments = ref<CommentType[]>([])
+/** 最新评论 */
+const newComments = ref<CommentType[]>([])
 
-// 热门评论
-const hotComments: any = ref([])
-// 最新评论
-const newComments: any = ref([])
-
-// 根据类型获取评论
+/** 根据类型获取评论 */
 async function getComments() {
-  let res: any = []
-  if (type == 'song') {
-    res = await songCommentApi(id)
-  } else if (type == 'playlist') {
-    res = await playlistCommentApi(id)
-  } else if (type == 'album') {
-    res = await albumCommentApi(id)
-  } else if (type == 'mv') {
-    res = await mvCommentApi(id)
+  let res: { hotComments: CommentType[]; comments: CommentType[] }
+  if (props.type === 'song') {
+    res = await songCommentApi(props.id)
+  } else if (props.type === 'playlist') {
+    res = await playlistCommentApi(props.id)
+  } else if (props.type === 'album') {
+    res = await albumCommentApi(props.id)
+  } else {
+    res = await mvCommentApi(props.id)
   }
   hotComments.value = res.hotComments
   newComments.value = res.comments

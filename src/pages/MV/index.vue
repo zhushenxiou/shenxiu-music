@@ -44,41 +44,39 @@
 import { staticMVCategory } from './static/useStaticData'
 import { reactive, ref } from 'vue'
 import { mvApi } from '@/api/mv'
-import { ElMessage } from 'element-plus';
-import CVideoList from '../../components/common/CMVList.vue';
-// 分类数据
+import { ElMessage } from 'element-plus'
+import CVideoList from '../../components/common/CMVList.vue'
+import type { MVType } from '@/api/types'
+
 const category = staticMVCategory
 
 const isLoading = ref(true)
 
-// 查询条件
+/** 查询条件 */
 const condition = reactive({
   area: '全部',
   type: '全部',
   order: '全部',
-  // 当前加载数据的次数（配合实现懒加载）
   count: 1,
-  // 每次加载24个
   limit: 24,
-  // 是否还有更多数据
   isMore: false,
 })
 
-// mv数据
-const mvData = ref(<any>[])
+/** MV 数据 */
+const mvData = ref<MVType[]>([])
 
-// 获取分类mv数据
+/** 获取分类 MV 数据 */
 async function getMV() {
   isLoading.value = true
-  const res: any = await mvApi(condition.area, condition.type, condition.order,
+  const res = await mvApi(condition.area, condition.type, condition.order,
     (condition.count - 1) * condition.limit, condition.limit)
   mvData.value.push(...res.data)
   condition.isMore = res.hasMore
   isLoading.value = false
 }
 
-// 切换条件
-function switchOpt(key: any, opt: string) {
+/** 切换分类条件 */
+function switchOpt(key: string, opt: string) {
   if (opt == 'area') {
     condition.area = key
   } else if (opt == 'type') {

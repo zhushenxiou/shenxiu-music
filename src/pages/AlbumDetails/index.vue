@@ -52,13 +52,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePlayerStore } from '@/stores/player'
-import { albumDetailsApi } from '@/api/album'
+import { albumDetailsApi, type AlbumDetailsResponse } from '@/api/album'
 import { timestampToDate } from '@/utils/time'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CComments from '@/components/common/CComments.vue'
+import type { SongType } from '@/api/types'
 
 const route = useRoute()
 const store = usePlayerStore()
@@ -69,31 +70,29 @@ const isLoading = ref(true)
 
 const selectedTag = ref('songs')
 
-// 专辑详情
-const album = ref({
+/** 专辑详情 */
+const album = ref<AlbumDetailsResponse['album']>({
   blurPicUrl: '',
   name: '',
-  artists: [{ name: '' }],
-  publishTime: '',
-  description: ''
+  artists: [],
+  publishTime: 0,
+  description: '',
 })
 
-// 专辑里面的歌曲
-const songlist = ref()
+/** 专辑歌曲 */
+const songlist = ref<SongType[]>([])
 
 async function getAlbumDetails() {
   isLoading.value = true
-  const res: any = await albumDetailsApi(id.value)
+  const res = await albumDetailsApi(id.value)
   console.log(res)
   album.value = res.album
   songlist.value = res.songs
   isLoading.value = false
 }
 
-
 function playAll() {
-  // 切换到本歌单
-  if (songlist.value != store.playlist) {
+  if (songlist.value !== store.playlist) {
     store.playlist = songlist.value
   }
   store.index = 0
@@ -101,5 +100,7 @@ function playAll() {
   store.updateCurSong()
 }
 
-getAlbumDetails()
+onMounted(() => {
+  getAlbumDetails()
+})
 </script>

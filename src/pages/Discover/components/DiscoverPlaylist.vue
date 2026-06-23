@@ -44,37 +44,38 @@ import { ref, onMounted } from 'vue'
 import { playlistTagApi, hotTagApi, handpickApi } from '@/api/discovery'
 import Playlist from '@/components/common/CPlaylist.vue'
 import { debounce } from 'lodash-es'
+import type { TagType, PlaylistType } from '@/api/types'
 
 const loading = ref(true)
 const loadingMore = ref(false)
-const playlistTag = ref()
-const hotTag = ref()
+const playlistTag = ref<TagType[]>([])
+const hotTag = ref<TagType[]>([])
 const currentSelectedName = ref('华语')
-const playlists = ref([] as any[])
+const playlists = ref<PlaylistType[]>([])
 const pageInfo = ref({
   currentPage: 0,
   pageSize: 30,
 })
 const hasMore = ref(true)
-const playlistContainer = ref(null)
+const playlistContainer = ref<HTMLElement | null>(null)
 
 async function getPlaylistTag() {
-  const res: any = await playlistTagApi()
+  const res = await playlistTagApi()
   playlistTag.value = res.sub
 }
 
 async function getHotTag() {
-  const res: any = await hotTagApi()
+  const res = await hotTagApi()
   hotTag.value = res.tags
 }
 
-// 切换标签时重置并重新加载
-function changeCategory(index: number | string) {
+/** 切换标签时重置并重新加载 */
+function changeCategory(index: number) {
   currentSelectedName.value = playlistTag.value[index].name
   resetAndLoad()
 }
 
-function changeHotCategory(index: number | string) {
+function changeHotCategory(index: number) {
   currentSelectedName.value = hotTag.value[index].name
   resetAndLoad()
 }
@@ -86,7 +87,7 @@ function resetAndLoad() {
   getHandpick(true)
 }
 
-// 获取歌单，isReset标识是否为重置加载
+/** 获取歌单，isReset 标识是否为重置加载 */
 async function getHandpick(isReset = false) {
   if (loadingMore.value || (!hasMore.value && !isReset)) return
 
@@ -97,24 +98,19 @@ async function getHandpick(isReset = false) {
   }
 
   try {
-    const res: any = await handpickApi(currentSelectedName.value, pageInfo.value.currentPage)
+    const res = await handpickApi(currentSelectedName.value, pageInfo.value.currentPage)
 
-    // 处理数据
-    res.playlists.forEach((item: any) => {
+    res.playlists.forEach((item) => {
       item.picUrl = item.coverImgUrl
     })
 
-    // 重置加载或追加加载
     if (isReset) {
       playlists.value = res.playlists
     } else {
       playlists.value = [...playlists.value, ...res.playlists]
     }
 
-    // 检查是否还有更多数据
     hasMore.value = res.playlists.length === pageInfo.value.pageSize
-
-    // 增加页码
     pageInfo.value.currentPage++
   } finally {
     loading.value = false

@@ -61,9 +61,9 @@ function closeDialog() {
   loginDialogIsVisible.value = false
 }
 
-// 退出登录
+/** 退出登录 */
 async function toLogout() {
-  const res: any = await logoutApi()
+  const res = await logoutApi()
   console.log(res)
   if (res.code === 200) {
     ElMessage.success('已退出登录')
@@ -85,11 +85,10 @@ const cookie = computed(() => {
 })
 
 async function getAccountInfo() {
-  // 没有cookie就不获取
   if (!localStorage.getItem('cookie')) {
     return
   }
-  const res: any = await getAccountInfoApi()
+  const res = await getAccountInfoApi()
   if (res.profile === null) {
     await logoutApi()
     localStorage.removeItem('cookie')

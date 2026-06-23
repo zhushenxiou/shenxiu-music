@@ -17,31 +17,32 @@ import { useRoute } from 'vue-router'
 import { searchApi } from '@/api/search'
 import CPlaylist from '@/components/common/CPlaylist.vue'
 import CPagination from '@/components/common/CPagination.vue'
+import type { PlaylistType } from '@/api/types'
+
 const route = useRoute()
 
-const keywords = computed(() => {
-  return route.params.keywords
-})
+const keywords = computed(() => route.params.keywords as string)
 
 const pageInfo = reactive({
   pageSize: 30,
-  curPage: 1, // 当前页
-  total: 0, // 总页数
+  curPage: 1,
+  total: 0,
 })
 
 const isLoading = ref(true)
 
-// 歌单列表
-const playlists = ref()
+/** 歌单列表 */
+const playlists = ref<PlaylistType[]>([])
 
 async function getSearchPlaylist() {
   isLoading.value = true
-  const res: any = await searchApi(keywords.value, 1000, (pageInfo.curPage - 1) * 30)
-  pageInfo.total = res.result.playlistCount
-  res.result.playlists.forEach((item: any) => {
+  const res = await searchApi(keywords.value, 1000, (pageInfo.curPage - 1) * 30)
+  const data = res as { result: { playlistCount: number; playlists: PlaylistType[] } }
+  pageInfo.total = data.result.playlistCount
+  data.result.playlists.forEach((item) => {
     item.picUrl = item.coverImgUrl
   })
-  playlists.value = res.result.playlists
+  playlists.value = data.result.playlists
   isLoading.value = false
 }
 

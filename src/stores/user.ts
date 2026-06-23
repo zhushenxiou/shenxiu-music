@@ -1,33 +1,34 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { userDetailsApi, userPlaylistApi } from '@/api/user'
+import type { PlaylistType } from '@/api/types'
 
 export const useUserStore = defineStore('user', () => {
-  // 用户ID
+  /** 用户ID */
   const uid = ref(0)
-  // 用户信息
-  const userInfo = ref({ level: '', userId: 0 })
-  // 创建的歌单
-  const createdPlaylist = ref<any>([])
-  // 收藏/订阅(subscrib)的歌单
-  const subscribedPlaylist = ref<any>([])
+  /** 用户信息 */
+  const userInfo = ref({ level: 0, userId: 0 })
+  /** 创建的歌单 */
+  const createdPlaylist = ref<PlaylistType[]>([])
+  /** 收藏/订阅的歌单 */
+  const subscribedPlaylist = ref<PlaylistType[]>([])
 
-  // 获取用户数据
+  /** 获取用户数据 */
   const getUserData = async () => {
     // 获取用户信息
-    const info: any = await userDetailsApi(uid.value)
+    const info = await userDetailsApi(uid.value)
     userInfo.value = info.profile
     userInfo.value.level = info.level
 
     // 获取用户歌单
-    const res: any = await userPlaylistApi(uid.value)
+    const res = await userPlaylistApi(uid.value)
 
     // 清空历史歌单数据
     createdPlaylist.value = []
     subscribedPlaylist.value = []
 
     // 区分创建的歌单和订阅的歌单
-    res.playlist.forEach((item: any) => {
+    res.playlist.forEach((item) => {
       // 适配CPlaylist组件的picUrl字段
       item.picUrl = item.coverImgUrl
 

@@ -1,12 +1,31 @@
 import request from '../utils/request'
 
+// ==================== 响应类型 ====================
+
+export interface SongUrlResponse {
+  data: Array<{
+    url: string
+  }>
+}
+
+export interface LyricResponse {
+  lrc: {
+    lyric: string
+  }
+}
+
+export interface SongDownloadResponse {
+  data: {
+    url: string
+  }
+}
+
+// ==================== API 函数 ====================
+
 /**
- * 获取音乐 url - 新版
- * @param id - 音乐 id，支持多个 id 用逗号分隔，如 '1969519579,33894312'
- * @param level - 播放音质等级: standard => 标准, higher => 较高, exhigh => 极高,
- *                lossless => 无损, hires => Hi-Res, jyeffect => 高清环绕声,
- *                sky => 沉浸环绕声, dolby => 杜比全景声, jymaster => 超清母带
- *                注意：杜比全景声需要设备支持，cookie 需传入 os=pc 保证返回正常码率
+ * 获取音乐播放 URL
+ * @param id      - 音乐 id，多个用逗号分隔，如 '1969519579,33894312'
+ * @param level   - 播放音质等级: standard | higher | exhigh | lossless | hires | jyeffect | sky | dolby | jymaster
  * @param unblock - 是否使用歌曲解锁
  */
 export const songUrlApi = (
@@ -14,23 +33,23 @@ export const songUrlApi = (
   level: string = 'higher',
   unblock: boolean = true,
 ) => {
-  return request({
+  return request<SongUrlResponse>({
     url: `/song/url/v1?id=${id}&level=${level}&unblock=${unblock}`,
     method: 'GET',
   })
 }
 
-// 获取歌曲歌词
+/** 获取歌曲歌词 */
 export const lyricApi = (id: number) => {
-  return request({
+  return request<LyricResponse>({
     url: `/lyric?id=${id}`,
     method: 'GET',
   })
 }
 
-//下载歌曲
+/** 下载歌曲（获取下载链接） */
 export const songDownLoadApi = (id: number) => {
-  return request({
+  return request<SongDownloadResponse>({
     url: `/song/download/url?id=${id}&br=320000`,
     method: 'GET',
   })

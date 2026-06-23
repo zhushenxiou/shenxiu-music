@@ -57,11 +57,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userDetailsApi, userPlaylistApi } from '@/api/user'
 import CPlaylist from '@/components/common/CPlaylist.vue'
 import { useUserStore } from '@/stores/user'
+import type { UserProfileType, PlaylistType } from '@/api/types'
+
 const route = useRoute()
 const router = useRouter()
 
@@ -71,27 +73,24 @@ const id = computed(() => {
 
 const isLoading = ref(true)
 
-// 用户信息
-const userInfo = ref<any>({
-  avatarUrl: ''
+/** 用户信息 */
+const userInfo = ref<UserProfileType>({
+  userId: 0,
+  nickname: '',
+  avatarUrl: '',
 })
-// 用户创建的歌单
-const createdPlaylist = ref(<any>[])
-// 用户收藏/订阅(subscrib)的歌单
-const subscribedPlaylist = ref(<any>[])
+/** 用户创建的歌单 */
+const createdPlaylist = ref<PlaylistType[]>([])
+/** 用户收藏的歌单 */
+const subscribedPlaylist = ref<PlaylistType[]>([])
 
 async function getUserDetails() {
   isLoading.value = true
-  // 获取信息
-  const info: any = await userDetailsApi(id.value)
-  userInfo.value = info.profile
-  userInfo.value.level = info.level
-  // 获取歌单
-  const res: any = await userPlaylistApi(id.value)
-  res.playlist.forEach((item: any) => {
-    // 方便使用CPlaylist组件
+  const info = await userDetailsApi(id.value)
+  userInfo.value = { ...info.profile, level: info.level }
+  const res = await userPlaylistApi(id.value)
+  res.playlist.forEach((item) => {
     item.picUrl = item.coverImgUrl
-    // 不是订阅就是创建，只有这两种类型的歌单
     if (!item.subscribed) {
       createdPlaylist.value.push(item)
     } else {
@@ -104,22 +103,19 @@ async function getUserDetails() {
 function toFollows() {
   router.push({
     name: 'follows',
-    params: {
-      id: id.value
-    }
+    params: { id: id.value },
   })
 }
 function toFolloweds() {
   router.push({
     name: 'followeds',
-    params: {
-      id: id.value
-    }
+    params: { id: id.value },
   })
 }
 
-getUserDetails()
-
+onMounted(() => {
+  getUserDetails()
+})
 </script>
 
 <style lang="less">

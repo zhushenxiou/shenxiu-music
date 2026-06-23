@@ -52,18 +52,19 @@ import { useRouter } from 'vue-router'
 import { songDownLoadApi } from '@/api/song'
 import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
+import type { SongType } from '@/api/types'
 
 const router = useRouter()
 const store = usePlayerStore()
-const props = defineProps(['songlist'])
-// 为 element-Plus 表格的行属性中添加索引
-function addIndex({ row, rowIndex }: { row: any, rowIndex: number }) {
-  //把每一行的索引放进row
+const props = defineProps<{ songlist: SongType[] }>()
+
+/** 为 Element Plus 表格行注入索引 */
+function addIndex({ row, rowIndex }: { row: SongType; rowIndex: number }) {
   row.index = rowIndex
 }
 
-// 播放音乐
-async function playSong(row: any) {
+/** 播放音乐 */
+async function playSong(row: SongType) {
   // 如果歌单已经变了，就改变歌单
   if (props.songlist != store.playlist) {
     store.playlist = props.songlist

@@ -11,13 +11,14 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { userFollowedsApi } from '@/api/user'
 import CUserlist from '@/components/common/CUserlist.vue'
+import type { FollowUserType } from '@/api/types'
 
 const route = useRoute()
 
-const followedsList: any = ref([])
+const followedsList = ref<FollowUserType[]>([])
 
 async function getFolloweds() {
-  const res: any = await userFollowedsApi(route.params.id)
+  const res = await userFollowedsApi(route.params.id as string)
   followedsList.value.push(...res.followeds)
 }
 

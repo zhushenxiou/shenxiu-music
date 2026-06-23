@@ -1,42 +1,86 @@
 import request from '../utils/request'
+import type { BannerType, PlaylistType, TagType, ToplistItemType, ArtistType, SongType } from './types'
 
-// 轮播图的数据
+// ==================== 响应类型 ====================
+
+export interface BannerResponse {
+  banners: BannerType[]
+}
+
+export interface PersonalizedPlaylistResponse {
+  result: PlaylistType[]
+}
+
+export interface PlaylistTagResponse {
+  sub: TagType[]
+}
+
+export interface HotTagResponse {
+  tags: TagType[]
+}
+
+export interface HandpickResponse {
+  playlists: PlaylistType[]
+}
+
+export interface ToplistResponse {
+  list: ToplistItemType[]
+}
+
+export interface SingerlistResponse {
+  artists: ArtistType[]
+  more: boolean
+}
+
+export interface DailyStarPlaylistResponse {
+  recommend: PlaylistType[]
+}
+
+export interface DailyStarSongsResponse {
+  data: {
+    dailySongs: SongType[]
+  }
+}
+
+// ==================== API 函数 ====================
+
+/** 轮播图 */
 export const bannerApi = () => {
-  return request({ url: `/banner?type=0`, method: 'GET' })
+  return request<BannerResponse>({ url: `/banner?type=0`, method: 'GET' })
 }
 
-// 推荐歌单的数据
+/** 推荐歌单 */
 export const personalizedPlaylistApi = () => {
-  return request({ url: `/personalized?limit=30`, method: 'GET' })
+  return request<PersonalizedPlaylistResponse>({ url: `/personalized?limit=30`, method: 'GET' })
 }
 
-// 歌单标签列表
+/** 歌单标签列表 */
 export const playlistTagApi = () => {
-  return request({ url: `/playlist/catlist`, method: 'GET' })
+  return request<PlaylistTagResponse>({ url: `/playlist/catlist`, method: 'GET' })
 }
 
-// 热门歌单分类
+/** 热门歌单分类 */
 export const hotTagApi = () => {
-  return request({ url: `/playlist/hot`, method: 'GET' })
+  return request<HotTagResponse>({ url: `/playlist/hot`, method: 'GET' })
 }
 
-//根据分类和分页获取歌单（网友精选碟）
+/** 根据分类和分页获取歌单（网友精选碟） */
 export const handpickApi = (tag: string, currentPage: number) => {
-  return request({
+  return request<HandpickResponse>({
     url: `/top/playlist?cat=${tag}&offset=${currentPage * 25}&limit=25`,
     method: 'GET',
   })
 }
 
-// 所有榜单
+/** 所有榜单 */
 export const toplistApi = () => {
-  return request({
+  return request<ToplistResponse>({
     url: `/toplist/detail`,
     method: 'GET',
   })
 }
 
-//根据分类获取歌手
+/** 根据分类获取歌手 */
 export const singerlistApi = (
   area: number,
   type: number,
@@ -44,23 +88,23 @@ export const singerlistApi = (
   offset: number,
   limit: number,
 ) => {
-  return request({
+  return request<SingerlistResponse>({
     url: `/artist/list?&area=${area}&type=${type}&initial=${initial}&offset=${offset}&limit=${limit}`,
     method: 'GET',
   })
 }
 
-// 每日推荐 歌单 需要登录
+/** 每日推荐歌单（需登录） */
 export const dailyStarPlaylistApi = () => {
-  return request({
+  return request<DailyStarPlaylistResponse>({
     url: `/recommend/resource`,
     method: 'GET',
   })
 }
 
-// 每日推荐 歌曲 需要登录
+/** 每日推荐歌曲（需登录） */
 export const dailyStarSongsApi = () => {
-  return request({
+  return request<DailyStarSongsResponse>({
     url: `/recommend/songs`,
     method: 'GET',
   })
