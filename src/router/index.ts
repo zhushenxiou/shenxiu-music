@@ -105,12 +105,6 @@ const router = createRouter({
       component: () => import('@/pages/MVDetails/index.vue'),
       name: 'videoDetails',
     },
-    //每日推荐
-    {
-      path: '/dailyRecommend',
-      component: () => import('@/pages/DailyRecommend/index.vue'),
-      name: 'dailyRecommend',
-    },
     // 用户详情页
     {
       path: '/userDetails/:id',

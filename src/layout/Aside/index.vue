@@ -33,7 +33,6 @@ const userStore = useUserStore()
 const menus = [
   { name: 'discover', label: '发现', icon: '&#xe609;', path: '/discover/recommend' },
   { name: 'video', label: '视频', icon: '&#xe9f0;', path: '/video' },
-  { name: 'dailyRecommend', label: '每日推荐', icon: '&#xe608;', path: '/dailyRecommend' },
   { name: 'myMusic', label: '我的', icon: '&#xe601;', path: '/userDetails' },
 ]
 
@@ -46,7 +45,7 @@ const activeMenu = computed(() => {
 
 function selectMenu(menu: { path: string; name: string }) {
   if (
-    (menu.name == 'myMusic' || menu.name == 'dailyRecommend') &&
+    (menu.name == 'myMusic') &&
     !localStorage.getItem('cookie')
   ) {
     ElMessage.warning('该页面需要登录才能访问')

@@ -93,19 +93,3 @@ export const singerlistApi = (
     method: 'GET',
   })
 }
-
-/** 每日推荐歌单（需登录） */
-export const dailyStarPlaylistApi = () => {
-  return request<DailyStarPlaylistResponse>({
-    url: `/recommend/resource`,
-    method: 'GET',
-  })
-}
-
-/** 每日推荐歌曲（需登录） */
-export const dailyStarSongsApi = () => {
-  return request<DailyStarSongsResponse>({
-    url: `/recommend/songs`,
-    method: 'GET',
-  })
-}
