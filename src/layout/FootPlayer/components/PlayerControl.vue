@@ -40,7 +40,7 @@
     <!-- 进度条 -->
     <div class="progressBar">
       <div class="curTime">{{ curTime }}</div>
-      <el-slider v-model="store.curDuration" :max="duration" @change="changeDuration" :show-tooltip="false" />
+      <el-slider v-model="sliderValue" :max="duration" @change="changeDuration" @mousedown="isDragging = true" :show-tooltip="false" />
       <div class="endTime">{{ endTime }}</div>
     </div>
     <!-- 播放音乐的核心组件 autoplay-->
@@ -72,11 +72,15 @@ const store = usePlayerStore()
 const audioPlayer = ref()
 // 循环模式 loop random cycle
 const loopMode = ref('loop')
+// 拖动进度条标志（防止 timeupdate 覆盖用户操作）
+const isDragging = ref(false)
+// 本地滑块值，隔离 timeupdate 的覆盖
+const sliderValue = ref(0)
 
 
-// 当前时间 字符串
+// 当前时间 字符串（跟随滑块值，拖动时不会跳动）
 const curTime = computed(() => {
-  return msToMinSeconed(store.curDuration)
+  return msToMinSeconed(sliderValue.value)
 })
 // 总时间 毫秒
 const duration = computed(() => {
@@ -117,14 +121,17 @@ function togglePlay() {
   }
 }
 
-// 拖动进度条
+// 拖动进度条（松开滑块时触发）
 function changeDuration(val: number) {
+  isDragging.value = false
   // 如果有播放音乐
   if (store.curSongUrl) {
     store.curDuration = val
+    sliderValue.value = val
     audioPlayer.value.currentTime = val / 1000
   } else {
     store.curDuration = 0
+    sliderValue.value = 0
     ElMessage.warning('无可播放歌曲，无法进行操作')
   }
 }
@@ -158,6 +165,8 @@ watch(
     // 切换的歌曲，更新为0, 且默认播放
     if (val != oldVal) {
       store.curDuration = 0
+      sliderValue.value = 0
+      isDragging.value = false
       store.isPlaying = true
     }
   },
@@ -193,10 +202,22 @@ watch(
   }
 )
 
+// 监听 store.curDuration 同步到本地滑块（拖动期间不同步）
+watch(
+  () => store.curDuration,
+  (val) => {
+    if (!isDragging.value) {
+      sliderValue.value = val
+    }
+  },
+)
+
 // 播放音乐自动触发
 function timeupdate(e: any) {
-  // 更新歌曲的当前播放时长
-  store.curDuration = e.target.currentTime * 1000
+  // 拖动进度条时不更新，避免覆盖用户操作
+  if (!isDragging.value) {
+    store.curDuration = e.target.currentTime * 1000
+  }
 
   // 判断歌曲是否为试听歌曲
   if (e.target.ended && curTime.value < endTime.value) {
