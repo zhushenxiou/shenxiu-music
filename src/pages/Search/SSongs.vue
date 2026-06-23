@@ -8,7 +8,10 @@
       <!-- 歌曲列表 -->
       <CSonglist :songlist="songlist" />
       <!-- 分页 -->
-      <CPagination :page-info="pageInfo" :handle-change="getSearchSongs" />
+      <div class="pagination">
+        <el-pagination background v-model:current-page="pageInfo.curPage" layout="prev, pager, next"
+          :total="pageInfo.total" :page-size="pageInfo.pageSize" @current-change="getSearchSongs" />
+      </div>
     </div>
   </div>
 </template>
@@ -18,7 +21,6 @@ import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import CSonglist from '@/components/common/CSonglist.vue'
 import { searchApi } from '@/api/search'
-import CPagination from '@/components/common/CPagination.vue'
 import type { SongType } from '@/api/types'
 
 const route = useRoute()
@@ -55,6 +57,13 @@ getSearchSongs()
     margin-left: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
   }
 }
 </style>

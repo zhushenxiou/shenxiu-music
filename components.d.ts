@@ -10,7 +10,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     CComments: typeof import('./src/components/common/CComments.vue')['default']
     CMVList: typeof import('./src/components/common/CMVList.vue')['default']
-    CPagination: typeof import('./src/components/common/CPagination.vue')['default']
     CPlaylist: typeof import('./src/components/common/CPlaylist.vue')['default']
     CSingerList: typeof import('./src/components/common/CSingerList.vue')['default']
     CSonglist: typeof import('./src/components/common/CSonglist.vue')['default']

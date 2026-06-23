@@ -8,7 +8,10 @@
       <!-- 歌手列表 -->
       <CSingerList :singerlist="singerlist" />
       <!-- 分页 -->
-      <CPagination :page-info="pageInfo" :handle-change="getSearchSinger" />
+      <div class="pagination">
+        <el-pagination background v-model:current-page="pageInfo.curPage" layout="prev, pager, next"
+          :total="pageInfo.total" :page-size="pageInfo.pageSize" @current-change="getSearchSinger" />
+      </div>
     </div>
   </div>
 </template>
@@ -17,7 +20,6 @@
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { searchApi } from '@/api/search'
-import CPagination from '../../components/common/CPagination.vue'
 import CSingerList from '../../components/common/CSingerList.vue'
 import type { ArtistType } from '@/api/types'
 
@@ -56,6 +58,13 @@ getSearchSinger()
   .count {
     margin-left: 1rem;
     font-weight: 600;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
   }
 }
 </style>

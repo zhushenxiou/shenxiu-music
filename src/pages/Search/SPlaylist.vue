@@ -6,7 +6,10 @@
     <!-- 歌单列表 -->
     <div class="playlists" v-loading="isLoading">
       <CPlaylist :playlists="playlists" :type="'playlist'" />
-      <CPagination :page-info="pageInfo" :handle-change="getSearchPlaylist" />
+      <div class="pagination">
+        <el-pagination background v-model:current-page="pageInfo.curPage" layout="prev, pager, next"
+          :total="pageInfo.total" :page-size="pageInfo.pageSize" @current-change="getSearchPlaylist" />
+      </div>
     </div>
   </div>
 </template>
@@ -16,7 +19,6 @@ import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { searchApi } from '@/api/search'
 import CPlaylist from '@/components/common/CPlaylist.vue'
-import CPagination from '@/components/common/CPagination.vue'
 import type { PlaylistType } from '@/api/types'
 
 const route = useRoute()
@@ -56,6 +58,13 @@ getSearchPlaylist()
   .count {
     margin-left: 1rem;
     font-weight: 600;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
   }
 }
 </style>

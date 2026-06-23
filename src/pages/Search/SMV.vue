@@ -8,7 +8,10 @@
       <CVideoList :video-data="mvs" />
     </div>
     <!-- 分页 -->
-    <CPagination :page-info="pageInfo" :handle-change="getSearchMV" />
+    <div class="pagination">
+      <el-pagination background v-model:current-page="pageInfo.curPage" layout="prev, pager, next"
+        :total="pageInfo.total" :page-size="pageInfo.pageSize" @current-change="getSearchMV" />
+    </div>
   </div>
 </template>
 
@@ -16,7 +19,6 @@
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { searchApi } from '@/api/search'
-import CPagination from '@/components/common/CPagination.vue'
 import CVideoList from '@/components/common/CMVList.vue'
 import type { MVType } from '@/api/types'
 
@@ -55,6 +57,13 @@ getSearchMV()
     margin-left: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
   }
 }
 </style>
