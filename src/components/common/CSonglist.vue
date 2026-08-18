@@ -71,7 +71,7 @@ async function playSong(row: SongType) {
   }
   // 如果之前有正在播放的歌曲，则先将其执行暂停操作再进行后续步骤
   store.isPlaying = false
-  store.index = row.index
+  store.index = row.index ?? 0
   store.updateCurSong()
 }
 

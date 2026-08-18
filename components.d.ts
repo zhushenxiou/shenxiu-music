@@ -18,7 +18,6 @@ declare module 'vue' {
     ElBacktop: typeof import('element-plus/es')['ElBacktop']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCard: typeof import('element-plus/es')['ElCard']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElContainer: typeof import('element-plus/es')['ElContainer']
@@ -42,12 +41,10 @@ declare module 'vue' {
     Login: typeof import('./src/components/Login/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SvgIcon: typeof import('./src/components/common/SvgIcon.vue')['default']
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
   export interface GlobalDirectives {
-    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

@@ -143,7 +143,7 @@ function prevSong() {
     // 如果是第一首的上一首就是最后一首
     store.index = store.index == 0 ? store.playlist.length - 1 : store.index - 1
   } else if (loopMode.value == 'random') {
-    store.index = Math.floor(Math.random() * store.playlist.value.length)
+    store.index = Math.floor(Math.random() * store.playlist.length)
   }
   store.updateCurSong()
 }

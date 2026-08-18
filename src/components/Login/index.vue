@@ -130,7 +130,9 @@ async function checkQRCodeState(key: string) {
     } else if (res.code === 803) {
       clearInterval(checkTimer)
       // 将获取到的 cookie 保存在 localStorage 中
-      localStorage.setItem('cookie', res.cookie)
+      if (res.cookie) {
+        localStorage.setItem('cookie', res.cookie)
+      }
       ElMessage.success('登录成功')
       props.closeDialog()
       // 刷新页面

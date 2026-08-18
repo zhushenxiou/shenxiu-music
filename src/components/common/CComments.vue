@@ -55,7 +55,7 @@ import type { CommentType } from '@/api/types'
 
 const router = useRouter()
 
-const props = defineProps<{ type: string; id: string | string[] }>()
+const props = defineProps<{ type: string; id: string | string[] | number }>()
 
 /** 热门评论 */
 const hotComments = ref<CommentType[]>([])
