@@ -6,6 +6,9 @@ dotenv.config();
 
 const ssh = new NodeSSH();
 
+// 远程部署目录
+const remoteDir = '/opt/shenxiu-music-ui';
+
 // 执行SSH命令函数
 async function executeCommand(ssh, command) {
   try {
@@ -33,8 +36,6 @@ async function executeCommand(ssh, command) {
 // 构建并部署Docker镜像
 async function buildAndDeployDocker(ssh) {
   try {
-    const remoteDir = '/opt/shenxiu-music-ui';
-
     // 进入部署目录
     const cdCommand = `cd ${remoteDir}`;
 
@@ -88,17 +89,28 @@ async function deploy() {
 
     console.log('连接成功，开始上传...');
 
+    // 确保远程部署目录存在并归属于当前SSH用户（/opt 默认root所有，直接SFTP上传会权限不足）
+    console.log('确保远程部署目录存在...');
+    const ensureDir = await executeCommand(
+      ssh,
+      `sudo mkdir -p ${remoteDir} && sudo chown -R ${process.env.SSH_USERNAME}:${process.env.SSH_USERNAME} ${remoteDir}`
+    );
+    if (!ensureDir) {
+      console.error('无法创建远程部署目录');
+      return;
+    }
+
     // 上传Dockerfile
     console.log('上传Dockerfile...');
-    await ssh.putFile('./Dockerfile', '/opt/shenxiu-music-ui/Dockerfile');
+    await ssh.putFile('./Dockerfile', `${remoteDir}/Dockerfile`);
 
     // 上传default.conf
     console.log('上传default.conf...');
-    await ssh.putFile('./default.conf', '/opt/shenxiu-music-ui/default.conf');
+    await ssh.putFile('./default.conf', `${remoteDir}/default.conf`);
 
     // 上传dist目录
     const localPath = './dist';
-    const remotePath = '/opt/shenxiu-music-ui/dist';
+    const remotePath = `${remoteDir}/dist`;
 
     console.log('上传dist目录...');
     const uploadSuccess = await ssh.putDirectory(localPath, remotePath, {

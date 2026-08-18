@@ -7,9 +7,11 @@ let url = ''
 const isDevelopment = import.meta.env.MODE === 'development'
 
 if (isDevelopment) {
+  // 开发环境走 Vite 代理
   url = '/api'
 } else {
-  url = 'http://117.72.189.56:3001/'
+  // 生产环境后端地址从 .env 的 VITE_API_BASE_URL 读取（构建时注入）
+  url = import.meta.env.VITE_API_BASE_URL
 }
 
 const requests = axios.create({
