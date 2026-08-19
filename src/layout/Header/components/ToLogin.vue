@@ -113,6 +113,8 @@ getAccountInfo()
 <style lang="less" scoped>
 .toLogin {
   display: flex;
+  // 弹窗的关闭按钮大小
+  --el-message-close-size: 24px;
 
   .clickLogin {
     cursor: pointer;
