@@ -11,7 +11,10 @@
       <div v-if="video.playCount" class="absolute top-2 right-2 text-white text-md font-black z-10">
         <span>{{ formatPlayCount(video.playCount) }}</span>
       </div>
-      <el-image :src="optimizeImageUrl(video.cover, 400, 225)" class="w-full aspect-[16/9] object-cover rounded-lg">
+      <el-image
+        :src="optimizeImageUrl(video.cover, 400, 225)"
+        class="w-full aspect-[16/9] object-cover rounded-lg"
+      >
         <template #placeholder>
           <div class="w-full h-full flex items-center justify-center bg-gray-100">
             加载中<span class="dot">...</span>
@@ -26,9 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { formatPlayCount } from '@/utils/format'
-import { optimizeImageUrl } from '@/utils/img'
+import { useRouter } from 'vue-router'
+import { formatPlayCount, optimizeImageUrl } from '@/utils/format'
 
 const router = useRouter()
 const { videoData } = defineProps(['videoData'])
@@ -36,7 +38,7 @@ const { videoData } = defineProps(['videoData'])
 function toVideoDetails(id: number) {
   router.push({
     name: 'videoDetails',
-    params: { id }
+    params: { id },
   })
 }
 </script>

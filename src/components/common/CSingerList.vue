@@ -28,7 +28,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { optimizeImageUrl, extractColorFromImage } from '@/utils/img'
+import { optimizeImageUrl } from '@/utils/format'
+import { extractColorFromImage } from '@/utils/color'
 
 const { singerlist } = defineProps(['singerlist'])
 

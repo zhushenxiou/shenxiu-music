@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { optimizeImageUrl } from '@/utils/img'
+import { optimizeImageUrl } from '@/utils/format'
 
 const router = useRouter()
 const { userlist } = defineProps(['userlist'])
