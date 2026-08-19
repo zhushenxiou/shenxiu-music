@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { formatPlayCount } from '@/utils/format'
-import { optimizeImageUrl } from '@/utils/img'
+import { optimizeImageUrl } from '@/utils/color'
 
 const router = useRouter()
 const { videoData } = defineProps(['videoData'])

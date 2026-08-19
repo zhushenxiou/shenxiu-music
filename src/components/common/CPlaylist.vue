@@ -43,7 +43,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatPlayCount } from '@/utils/format'
-import { optimizeImageUrl, extractColorFromImage } from '@/utils/img'
+import { optimizeImageUrl, extractColorFromImage } from '@/utils/color'
 
 const router = useRouter()
 const { playlists, type } = defineProps(['playlists', 'type'])

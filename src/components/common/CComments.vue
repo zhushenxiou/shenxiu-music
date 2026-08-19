@@ -50,7 +50,7 @@ import {
   albumCommentApi,
   mvCommentApi,
 } from '@/api/comment'
-import { optimizeImageUrl } from '@/utils/img'
+import { optimizeImageUrl } from '@/utils/color'
 import type { CommentType } from '@/api/types'
 
 const router = useRouter()
