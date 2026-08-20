@@ -1,31 +1,43 @@
 <template>
   <!-- 歌手详情页 -->
-  <div class="singerDetails">
+  <div>
     <!-- 歌手信息 -->
-    <div class="singerInfo">
-      <div class="left">
-        <img :src="singerInfo.cover" alt="" />
-      </div>
-      <div class="right">
-        <div class="title">
-          <span class="tag">歌手</span>
-          <span class="name">{{ singerInfo.name }}</span>
+    <div class="flex items-center pb-4 gap-4">
+       <el-image
+        :src="optimizeImageUrl(singerInfo.cover, 300, 300)"
+        lazy
+        crossorigin="anonymous"
+        class="w-40 h-40 rounded-xl"
+        @load="onMainBgChange"
+      >
+        <template #placeholder>
+          <div class="image-slot">加载中<span class="dot">...</span></div>
+        </template>
+      </el-image>
+      <div class="ml-4">
+        <div class="flex items-center mb-4">
+          <span
+            class="block h-6 w-16 text-[#ec4141] text-[15px] text-center border border-[#ec4141] rounded-[5px] mr-2"
+            >歌手</span
+          >
+          <span class="text-2xl font-bold text-black">{{ singerInfo.name }}</span>
         </div>
-        <div class="subscription">
-          <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe"><IconCollect class="mr-1" />{{ subscribed ? '取消关注' : '关注' }}</el-button>
+        <div class="mb-4">
+          <el-button type="danger" :plain="!subscribed" @click="toggleSubscribe"
+            ><IconCollect class="mr-1" />{{ subscribed ? '取消关注' : '关注' }}</el-button
+          >
         </div>
-        <div class="count">
-          <span class="songsCount">单曲数：{{ singerInfo.musicSize }}</span>
-          <span class="collectionsCount">专辑数：{{ singerInfo.albumSize }}</span>
-          <span class="videoCount">MV数：{{ singerInfo.mvSize }}</span>
+        <div class="relative right-4">
+          <span class="ml-4 text-sm text-gray-500">单曲数：{{ singerInfo.musicSize }}</span>
+          <span class="ml-4 text-sm text-gray-500">专辑数：{{ singerInfo.albumSize }}</span>
+          <span class="ml-4 text-sm text-gray-500">MV数：{{ singerInfo.mvSize }}</span>
         </div>
-
       </div>
     </div>
     <!-- 歌曲、专辑、歌手详情 -->
-    <el-tabs v-model="selectedTag" class="singerContent" v-loading="isLoading">
+    <el-tabs v-model="selectedTag" class="w-full h-full" v-loading="isLoading">
       <el-tab-pane label="热门歌曲" name="hotSongs">
-        <div class="title">热门歌曲50首</div>
+        <div class="text-center text-xl font-semibold mb-4">热门歌曲50首</div>
         <CSonglist :songlist="songlist" />
       </el-tab-pane>
       <el-tab-pane label="专辑" name="album">
@@ -33,20 +45,21 @@
       </el-tab-pane>
       <el-tab-pane label="MVType" name="mv">
         <CVideoList :video-data="mvlist" />
-        <div class="continueLoading">
+        <div class="flex justify-center p-2">
           <el-button color='#ed5736' plain @click="continueLoading">点击查看更多</el-button>
         </div>
       </el-tab-pane>
       <el-tab-pane label="歌手描述" name="descrip">
-        <div class="description">{{ singerInfo.briefDesc }}</div>
+        <div class="text-sm text-[#373737] leading-6 tracking-[1px] indent-8">
+          {{ singerInfo.briefDesc }}
+        </div>
       </el-tab-pane>
     </el-tabs>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted } from 'vue'
+import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { singerDetailsApi, singerHotSongApi, singerAlbumApi, singerMVApi, singerSubscribeApi, singerUnsubscribeApi, type SingerDetailsResponse } from '@/api/singer'
 import CSonglist from '@/components/common/CSonglist.vue'
@@ -54,9 +67,12 @@ import CPlaylist from '@/components/common/CPlaylist.vue'
 import IconCollect from '@/assets/icon/IconCollect.vue'
 import CVideoList from '@/components/common/CMVList.vue'
 import { ElMessage } from 'element-plus'
+import { useBgColorStore } from '@/stores/bgColor'
 import type { SongType, AlbumType, MVType } from '@/api/types'
+import { optimizeImageUrl } from '@/utils/format'
 
 const route = useRoute()
+const bgColorStore = useBgColorStore()
 
 const id = computed(() => route.params.id)
 
@@ -152,99 +168,13 @@ async function toggleSubscribe() {
 onMounted(() => {
   getData()
 })
-</script>
 
-<style lang="less">
-.singerDetails {
-  .singerInfo {
-    display: flex;
-    align-items: center;
-    padding-bottom: 1rem;
-
-    .left {
-      margin: 0 1rem;
-
-      img {
-        height: 10rem;
-        width: 10rem;
-        border-radius: 1rem;
-      }
-    }
-
-    .right {
-      margin-left: 1rem;
-
-      .title {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        .tag {
-          display: block;
-          height: 1.5rem;
-          width: 4rem;
-          color: #ec4141;
-          font-size: 15px !important;
-          text-align: center;
-          border: 1px solid #ec4141;
-          border-radius: 5px;
-          margin-right: 0.5rem;
-        }
-
-        .name {
-          font-size: 24px;
-          font-weight: bold;
-          color: #000;
-        }
-      }
-
-      .subscription {
-        i {
-          margin-right: 0.5rem;
-        }
-
-        margin-bottom: 1rem;
-      }
-
-      .count {
-        position: relative;
-        right: 1rem;
-
-        span {
-          margin-left: 1rem;
-          font-size: 14px;
-          color: #666;
-        }
-      }
-    }
-  }
-
-  .singerContent {
-    width: 100%;
-    height: 100%;
-
-    .title {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    .continueLoading {
-      display: flex;
-      justify-content: center;
-      padding: 0.5rem;
-    }
-
-    .description {
-      font-size: 14px;
-      color: #373737;
-      line-height: 1.5rem;
-      // letter-spacing 属性增加或减少字符间的空白（字符间距）
-      letter-spacing: 1px;
-      // 首行缩进
-      text-indent: 2rem;
-    }
-  }
+// 封面图加载完成后提取主题色，动态设置全局背景色
+async function onMainBgChange(e: Event) {
+  await bgColorStore.setMainBg(e.target as HTMLImageElement)
 }
-</style>
+
+onUnmounted(() => {
+  bgColorStore.resetBgColor()
+})
+</script>

@@ -3,14 +3,25 @@
   <div>
     <div class="w-full flex items-center mb-4">
       <!-- 专辑封面 -->
-      <div class="w-40 h-40 rounded-xl overflow-hidden">
-        <img :src="album.blurPicUrl" class="h-40 w-40 rounded-xl" lazy />
-      </div>
+      <el-image
+        :src="optimizeImageUrl(album.blurPicUrl, 300, 300)"
+        lazy
+        crossorigin="anonymous"
+        class="w-40 h-40 rounded-xl"
+        @load="onMainBgChange"
+      >
+        <template #placeholder>
+          <div class="image-slot">加载中<span class="dot">...</span></div>
+        </template>
+      </el-image>
       <!-- 专辑信息 -->
       <div class="ml-4">
         <!-- 标题 -->
         <div class="flex items-center mb-4">
-          <span class="h-6 w-16 text-red-500 text-sm text-center border border-red-500 rounded-md mr-2">专辑</span>
+          <span
+            class="h-6 w-16 text-red-500 text-sm text-center border border-red-500 rounded-md mr-2"
+            >专辑</span
+          >
           <span class="text-2xl font-bold text-black">{{ album.name }}</span>
         </div>
         <!-- 操作 -->
@@ -45,14 +56,16 @@
         <CComments :type="'album'" :id="id" />
       </el-tab-pane>
       <el-tab-pane label="专辑描述" name="descrip">
-        <div class="text-sm text-gray-700 leading-relaxed tracking-wider indent-8">{{ album.description }}</div>
+        <div class="text-sm text-gray-700 leading-relaxed tracking-wider indent-8">
+          {{ album.description }}
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePlayerStore } from '@/stores/player'
 import { albumDetailsApi, type AlbumDetailsResponse } from '@/api/album'
@@ -62,9 +75,14 @@ import CComments from '@/components/common/CComments.vue'
 import IconPlay from '@/assets/icon/IconPlay.vue'
 import IconCollect from '@/assets/icon/IconCollect.vue'
 import type { SongType } from '@/api/types'
+import { useBgColorStore } from '@/stores/bgColor'
+import { optimizeImageUrl } from '@/utils/format'
 
 const route = useRoute()
 const store = usePlayerStore()
+
+// 全局主内容背景色（由 layout 读取，这里设置主题色）
+const bgColorStore = useBgColorStore()
 
 const id = computed(() => route.params.id)
 
@@ -104,5 +122,14 @@ function playAll() {
 
 onMounted(() => {
   getAlbumDetails()
+})
+
+// 封面图加载完成后提取主题色，动态设置全局背景色
+async function onMainBgChange(e: Event) {
+  await bgColorStore.setMainBg(e.target as HTMLImageElement)
+}
+
+onUnmounted(() => {
+  bgColorStore.resetBgColor()
 })
 </script>

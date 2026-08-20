@@ -2,19 +2,17 @@
   <div class="w-full">
     <!-- 歌单介绍 -->
     <div class="flex mb-4">
-      <div class="img">
-        <el-image
-          :src="playlistDetails.coverImgUrl"
-          lazy
-          crossorigin="anonymous"
-          class="w-40 h-40 rounded-xl"
-          @load="onMainBgChange"
-        >
-          <template #placeholder>
-            <div class="image-slot">加载中<span class="dot">...</span></div>
-          </template>
-        </el-image>
-      </div>
+      <el-image
+        :src="optimizeImageUrl(playlistDetails.coverImgUrl, 300, 300)"
+        lazy
+        crossorigin="anonymous"
+        class="w-40 h-40 rounded-xl"
+        @load="onMainBgChange"
+      >
+        <template #placeholder>
+          <div class="image-slot">加载中<span class="dot">...</span></div>
+        </template>
+      </el-image>
       <div class="flex-1 ml-8">
         <!-- 标题 -->
         <div class="flex items-center mb-4">
@@ -89,7 +87,6 @@ import {
 } from '@/api/playlist'
 import { timestampToDate } from '@/utils/time'
 import { formatPlayCount } from '@/utils/format'
-import { getColor } from 'colorthief'
 import { usePlayerStore } from '@/stores/player'
 import { useBgColorStore } from '@/stores/bgColor'
 import CSonglist from '@/components/common/CSonglist.vue'
@@ -98,6 +95,7 @@ import IconPlay from '@/assets/icon/IconPlay.vue'
 import IconCollect from '@/assets/icon/IconCollect.vue'
 import { ElMessage } from 'element-plus'
 import type { PlaylistType, SongType } from '@/api/types'
+import { optimizeImageUrl } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -195,14 +193,7 @@ onMounted(() => {
 
 // 封面图加载完成后提取主题色，动态设置全局背景色
 async function onMainBgChange(e: Event) {
-  const color = await getColor(e.target as HTMLImageElement)
-  if (!color) {
-    return
-  }
-  const { r, g, b } = color.rgb()
-  // 浅色化：混合 85% 白色，保证上方文字可读
-  const l = (v: number) => Math.round(v * 0.15 + 255 * 0.85)
-  bgColorStore.setBgColor(`rgb(${l(r)},${l(g)},${l(b)})`)
+  await bgColorStore.setMainBg(e.target as HTMLImageElement)
 }
 
 onUnmounted(() => {
