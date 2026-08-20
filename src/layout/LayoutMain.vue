@@ -1,97 +1,43 @@
 <template>
-  <el-container class="layout">
-    <!-- 固定侧边栏 -->
-    <el-aside class="fixed-aside">
+  <div
+    class="w-screen h-screen flex overflow-hidden"
+    :style="{ backgroundColor: bgColorStore.bgColor || '#ffffff' }"
+  >
+    <!-- 左侧 aside -->
+    <aside class="w-48 shrink-0 h-full overflow-y-auto border-r border-[#ccc]">
       <Aside />
-    </el-aside>
+    </aside>
 
-    <!-- 右侧内容区域 -->
-    <el-container class="right-container">
-      <!-- 固定头部 -->
-      <el-header class="fixed-header">
-        <Header />
-      </el-header>
-
-      <!-- 可滚动主内容 -->
-      <el-main class="scrollable-main">
+    <!-- 右侧：header + main -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <Header />
+      <main ref="mainRef" class="flex-1 overflow-y-auto p-6 pb-21 transition-colors duration-500">
         <RouterView v-slot="{ Component }" :key="route.fullPath">
           <transition name="fade">
             <component :is="Component" />
           </transition>
         </RouterView>
-      </el-main>
-    </el-container>
+      </main>
+    </div>
 
-    <!-- 固定底部播放器 -->
-    <el-footer class="fixed-footer">
-      <FootPlayer />
-    </el-footer>
+    <!-- 回到顶部按钮 -->
+    <el-backtop :target="mainRef" :bottom="120"></el-backtop>
 
-    <!-- 回到顶部按钮，对于滚动刷新的页面，需要对应页面单独配置el-backtop的target -->
-    <el-backtop target=".scrollable-main" :bottom="120"></el-backtop>
-  </el-container>
+    <!-- 底部播放器：自身 fixed 定位 + 高 z-index，直接挂在布局根节点下，始终位于内容之上 -->
+    <FootPlayer />
+  </div>
 </template>
 
-
 <script setup lang="ts">
-import Header from "./Header/index.vue";
+import { ref } from 'vue'
+import Header from './Header/index.vue'
 import Aside from './Aside/index.vue'
 import FootPlayer from './FootPlayer/index.vue'
 import { useRoute } from 'vue-router'
+import {useBgColorStore} from '@/stores/bgColor'
 const route = useRoute()
+const mainRef = ref<HTMLElement>()
+
+/** 动态背景色，供子页面（如歌单详情）设置 */
+const bgColorStore = useBgColorStore()
 </script>
-
-<style lang="less">
-.layout {
-  // 固定侧边栏
-  .fixed-aside {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 12rem;
-    height: 100vh;
-    overflow-y: auto;
-    z-index: 1000;
-    border-right: 1px solid #e4e7ed;
-  }
-
-  // 右侧内容区域
-  .right-container {
-    margin-left: 12rem; // 避开侧边栏
-    width: calc(100% - 12rem);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  // 固定头部样式
-  .fixed-header {
-    position: static;
-    height: 60px;
-    z-index: 1000;
-    padding: 0;
-  }
-
-  // 可滚动主内容
-  .scrollable-main {
-    height: calc(100vh - 130px); // 总高度减去头部(60px)和底部(70px)
-    overflow-y: auto;
-    padding: 16px;
-    padding-bottom: 80px; // 额外增加底部内边距，确保内容不被底部播放器遮挡
-    margin: 0;
-    width: 100%;
-    background: #f7f9fc;
-  }
-
-  // 固定底部
-  .fixed-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    z-index: 1100;
-    padding: 0;
-  }
-}
-</style>

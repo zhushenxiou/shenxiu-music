@@ -3,7 +3,13 @@
     <!-- 歌单介绍 -->
     <div class="flex mb-4">
       <div class="img">
-        <el-image :src="playlistDetails.coverImgUrl" lazy class="w-40 h-40 rounded-xl">
+        <el-image
+          :src="playlistDetails.coverImgUrl"
+          lazy
+          crossorigin="anonymous"
+          class="w-40 h-40 rounded-xl"
+          @load="onMainBgChange"
+        >
           <template #placeholder>
             <div class="image-slot">加载中<span class="dot">...</span></div>
           </template>
@@ -12,7 +18,10 @@
       <div class="flex-1 ml-8">
         <!-- 标题 -->
         <div class="flex items-center mb-4">
-          <span class="h-6 w-16 text-red-500 text-sm text-center border border-red-500 rounded-md mr-2">歌单</span>
+          <span
+            class="h-6 w-16 text-red-500 text-sm text-center border border-red-500 rounded-md mr-2"
+            >歌单</span
+          >
           <span class="text-2xl font-bold text-black">{{ playlistDetails.name }}</span>
         </div>
         <!-- 作者信息 -->
@@ -22,10 +31,15 @@
               <div class="image-slot">加载中<span class="dot">...</span></div>
             </template>
           </el-image>
-          <span class="text-blue-500 cursor-pointer mr-2" @click="toUserDetails(playlistDetails.creator.userId)">
+          <span
+            class="text-blue-500 cursor-pointer mr-2"
+            @click="toUserDetails(playlistDetails.creator.userId)"
+          >
             {{ playlistDetails.creator.nickname }}
           </span>
-          <span class="text-xs text-gray-600"> {{ timestampToDate(playlistDetails.createTime) }}创建</span>
+          <span class="text-xs text-gray-600">
+            {{ timestampToDate(playlistDetails.createTime) }}创建</span
+          >
         </div>
         <!-- 操作 -->
         <div class="mb-4">
@@ -41,9 +55,7 @@
         <!-- 歌曲数量和播放量 -->
         <div class="flex text-sm text-gray-600">
           <div class="mr-4">歌曲：{{ playlistDetails.trackCount }}首</div>
-          <div>
-            播放量: {{ formatPlayCount(playlistDetails.playCount) }} 次
-          </div>
+          <div>播放量: {{ formatPlayCount(playlistDetails.playCount) }} 次</div>
         </div>
       </div>
     </div>
@@ -55,7 +67,8 @@
         <CComments :type="'playlist'" :id="id" />
       </el-tab-pane>
       <el-tab-pane label="歌单描述" name="descrip">
-        <div class="text-sm text-gray-700 leading-relaxed tracking-wider indent-8">{{ playlistDetails.description }}
+        <div class="text-sm text-gray-700 leading-relaxed tracking-wider indent-8">
+          {{ playlistDetails.description }}
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -66,12 +79,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { playlistDetailsApi, songDetailsApi, playlistSubscribeApi, playlistUnsubscribeApi } from '@/api/playlist'
+import {
+  playlistDetailsApi,
+  songDetailsApi,
+  playlistSubscribeApi,
+  playlistUnsubscribeApi,
+} from '@/api/playlist'
 import { timestampToDate } from '@/utils/time'
 import { formatPlayCount } from '@/utils/format'
+import { getColor } from 'colorthief'
 import { usePlayerStore } from '@/stores/player'
+import { useBgColorStore } from '@/stores/bgColor'
 import CSonglist from '@/components/common/CSonglist.vue'
 import CComments from '@/components/common/CComments.vue'
 import IconPlay from '@/assets/icon/IconPlay.vue'
@@ -82,6 +102,9 @@ import type { PlaylistType, SongType } from '@/api/types'
 const route = useRoute()
 const router = useRouter()
 const store = usePlayerStore()
+
+// 全局主内容背景色（由 layout 读取，这里设置主题色）
+const bgColorStore = useBgColorStore()
 
 const isLoading = ref(true)
 
@@ -162,12 +185,27 @@ async function playAll() {
 function toUserDetails(id: number) {
   router.push({
     name: 'userDetails',
-    params: { id }
+    params: { id },
   })
 }
 
-
 onMounted(() => {
   getPlaylistDetails()
+})
+
+// 封面图加载完成后提取主题色，动态设置全局背景色
+async function onMainBgChange(e: Event) {
+  const color = await getColor(e.target as HTMLImageElement)
+  if (!color) {
+    return
+  }
+  const { r, g, b } = color.rgb()
+  // 浅色化：混合 85% 白色，保证上方文字可读
+  const l = (v: number) => Math.round(v * 0.15 + 255 * 0.85)
+  bgColorStore.setBgColor(`rgb(${l(r)},${l(g)},${l(b)})`)
+}
+
+onUnmounted(() => {
+  bgColorStore.resetBgColor()
 })
 </script>

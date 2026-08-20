@@ -1,6 +1,9 @@
 <template>
   <!-- 底部栏播放器 -->
-  <div class="player">
+  <div
+    class="player"
+    :style="{ background: bgColorStore.bgColor }"
+  >
     <!-- 歌曲信息 -->
     <div class="left" @click="store.showSongDetails = !store.showSongDetails">
       <div class="img">
@@ -14,8 +17,13 @@
         {{ store.curSongInfo.name }}
       </div>
       <!-- 歌曲详情页 -->
-      <el-drawer v-model="store.showSongDetails" :with-header="false" direction="btt" :append-to-body="true"
-        :size="'100%'">
+      <el-drawer
+        v-model="store.showSongDetails"
+        :with-header="false"
+        direction="btt"
+        :append-to-body="true"
+        :size="'100%'"
+      >
         <PlayDetails />
       </el-drawer>
     </div>
@@ -30,7 +38,12 @@
           <IconPlaylist />
         </el-badge>
         <!-- 抽屉 -->
-        <el-drawer v-model="store.showPlaylist" :with-header="false" :append-to-body="true" :size="320">
+        <el-drawer
+          v-model="store.showPlaylist"
+          :with-header="false"
+          :append-to-body="true"
+          :size="320"
+        >
           <Playlist />
         </el-drawer>
       </div>
@@ -38,16 +51,17 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { usePlayerStore } from '@/stores/player.ts'
-import Playlist from './components/Playlist.vue'
-import PlayDetails from './components/PlayDetails.vue'
+import Playlist from './components/SongList.vue'
+import PlayDetails from './components/SongDetail.vue'
 import PlayerControl from './components/PlayerControl.vue'
 import { ElDrawer } from 'element-plus'
 import IconPlaylist from '@/assets/icon/IconPlaylist.vue'
+import { useBgColorStore } from '@/stores/bgColor.ts'
 
 const store = usePlayerStore()
+const bgColorStore = useBgColorStore()
 </script>
 
 <style lang="less">
@@ -59,8 +73,7 @@ const store = usePlayerStore()
   height: 70px;
   position: fixed;
   bottom: 0;
-  border-top: 1px solid #eee;
-  background-color: var(--footer-bg-color);
+  border-top: 1px solid #ccc;
   z-index: 9999 !important;
   padding: 0.5rem 1rem;
   cursor: default;
@@ -90,7 +103,6 @@ const store = usePlayerStore()
     flex-direction: column;
     align-items: center;
   }
-
 
   .right {
     width: 25%;

@@ -1,7 +1,12 @@
 <template>
   <!-- 封装歌曲列表 -->
   <div class="songlist">
-    <el-table :data="props.songlist" stripe style="width: 100%" @row-dblclick="playSong" :row-class-name="addIndex">
+    <el-table
+      :data="props.songlist"
+      style="width: 100%"
+      :row-class-name="addIndex"
+      @row-dblclick="playSong"
+    >
       <el-table-column type="index" width="50" />
       <!-- 下载标签 -->
       <el-table-column prop="id" label="下载" width="80">
@@ -32,7 +37,9 @@
       <!-- 对应专辑 -->
       <el-table-column prop="al.name" label="专辑" min-width="120">
         <template #default="scope">
-          <span class="clikable" @click="toAlbumDetails(scope.row.al.id)">{{ scope.row.al.name }}</span>
+          <span class="clikable" @click="toAlbumDetails(scope.row.al.id)">{{
+            scope.row.al.name
+          }}</span>
         </template>
       </el-table-column>
       <!-- 歌曲时长 -->
@@ -71,7 +78,7 @@ async function playSong(row: SongType) {
   }
   // 如果之前有正在播放的歌曲，则先将其执行暂停操作再进行后续步骤
   store.isPlaying = false
-  store.index = row.index ?? 0
+  store.index = row.index!
   store.updateCurSong()
 }
 
@@ -79,7 +86,7 @@ async function playSong(row: SongType) {
 function toSingerDetails(id: number) {
   router.push({
     name: 'singerDetails',
-    params: { id },
+    params: { id }
   })
 }
 
@@ -87,7 +94,7 @@ function toSingerDetails(id: number) {
 function toAlbumDetails(id: number) {
   router.push({
     name: 'albumDetails',
-    params: { id },
+    params: { id }
   })
 }
 
@@ -97,40 +104,67 @@ async function downloadSong(id: number, name: string) {
     // 调用 API 并提取 data 中的 url
     const res = await songDownLoadApi(id)
     if (res.data && typeof res.data.url === 'string') {
-      const url = res.data.url;
+      const url = res.data.url
 
       // 根据url获取文件内容
-      const response = await fetch(url);
+      const response = await fetch(url)
       // 将文件内容转成二进制
-      const blob = await response.blob();
+      const blob = await response.blob()
       // 将二进制转成url
-      const urlBlob = window.URL.createObjectURL(blob);
+      const urlBlob = window.URL.createObjectURL(blob)
 
-      const link = document.createElement('a');
-      link.href = urlBlob;
-      link.download = `${name}.mp3`; // 设置文件名
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const link = document.createElement('a')
+      link.href = urlBlob
+      link.download = `${name}.mp3` // 设置文件名
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
       // 释放内存
-      window.URL.revokeObjectURL(urlBlob);
+      window.URL.revokeObjectURL(urlBlob)
       ElMessage.success('下载成功,320kpbs超高清')
-
     } else {
       ElMessage.error('你没有登录或者你不是VIP')
     }
   } catch (error) {
-    ElMessage.error(`下载歌曲时发生错误:${error}`);
+    ElMessage.error(`下载歌曲时发生错误:${error}`)
   }
 }
 </script>
 
 <style lang="less">
 .songlist {
+  background-color: transparent;
   cursor: pointer;
 
   .el-table {
     font-size: 13px;
+    // 覆盖 Element Plus 表格的 CSS 变量，使其透明继承背景
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+    --el-table-header-bg-color: transparent;
+    --el-table-row-hover-bg-color: rgba(0, 0, 0, 0.04);
+
+    // 表头
+    thead th {
+      background-color: transparent !important;
+    }
+
+    // 表体行和单元格
+    tbody tr,
+    tbody td {
+      background-color: transparent !important;
+    }
+
+    // 所有单元格
+    th,
+    td {
+      background-color: transparent !important;
+    }
+  }
+
+  // 表格底部（分页区域）
+  .el-table__inner-wrapper {
+    background-color: transparent;
   }
 
   .download {
@@ -141,7 +175,6 @@ async function downloadSong(id: number, name: string) {
   }
 
   .clikable {
-
     &:hover {
       color: #ec4141;
       border-bottom: 1px solid #ec4141;

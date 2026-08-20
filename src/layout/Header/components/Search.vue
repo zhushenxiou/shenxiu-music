@@ -2,25 +2,30 @@
 <template>
   <!-- 搜索模块 -->
   <div class="search">
-    <el-popover placement="bottom" width="18rem" trigger="click">
+    <el-popover v-model:visible="popoverVisible" placement="bottom" width="18rem" trigger="click">
       <template #reference>
         <!-- 搜索框 -->
         <el-input
+          v-model.trim="keywords"
           class="search-input"
           placeholder="请输入内容"
           :prefix-icon="Search"
-          v-model.trim="keywords"
           @input="toSearch"
         ></el-input>
       </template>
       <!-- 热搜列表 -->
       <div class="hotsearch">
-        <div class="title">热搜榜</div>
+        <div class="header">
+          <div class="title">热搜榜</div>
+          <button class="close-btn" title="关闭" @click="popoverVisible = false">
+            <IconClose :size="14" />
+          </button>
+        </div>
         <div
-          class="item"
           v-for="(item, index) in hotSearch"
-          @click="goHotSearch(item.searchWord)"
           :key="index"
+          class="item"
+          @click="goHotSearch(item.searchWord)"
         >
           <div class="index">{{ index + 1 }}</div>
           <div class="searchWord">{{ item.searchWord }}</div>
@@ -36,10 +41,12 @@ import router from '@/router'
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { debounce } from 'lodash-es'
+import IconClose from '@/assets/icon/IconClose.vue'
 
 /**
  * 搜索
  */
+const popoverVisible = ref(false)
 const keywords = ref('')
 // 搜索函数，使用防抖处理，避免频繁请求
 const toSearch = debounce(function () {
@@ -49,8 +56,8 @@ const toSearch = debounce(function () {
     router.push({
       name: 'searchSongs',
       params: {
-        keywords: keywords.value,
-      },
+        keywords: keywords.value
+      }
     })
   }
 }, 800)
@@ -67,8 +74,8 @@ function goHotSearch(searchWord: string) {
   router.push({
     name: 'searchSongs',
     params: {
-      keywords: searchWord,
-    },
+      keywords: searchWord
+    }
   })
 }
 
@@ -129,13 +136,40 @@ onMounted(() => {
   background: #fff;
   overflow-y: auto;
 
-  .title {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 16px 12px;
     margin: 0 0 8px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #333;
-    z-index: 1;
+
+    .title {
+      padding: 0;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      z-index: 1;
+    }
+
+    .close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      color: #999;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s;
+
+      &:hover {
+        color: #333;
+        background: #f0f0f0;
+      }
+    }
   }
 
   .item {
