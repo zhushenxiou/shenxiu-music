@@ -2,7 +2,7 @@
   <div class="recommend" v-loading="isLoading">
     <!-- 轮播图 -->
     <div class="banner">
-      <el-carousel :interval="4000" type="card" height="400px" v-if="banners">
+      <el-carousel :interval="4000" type="card" height="100%" v-if="banners">
         <el-carousel-item v-for="(banner, index) in banners" :key="index">
           <img :src="banner.imageUrl" alt="" @click="handleBanner(banner)" />
         </el-carousel-item>
@@ -76,6 +76,12 @@ getData()
 
   .banner {
     width: 100%;
+    // banner 图片(type=0)约为 1080*300，高度按宽度比例自适应，不再写死固定高度
+    aspect-ratio: 18 / 5;
+
+    .el-carousel {
+      height: 100%;
+    }
 
     .el-carousel__item {
       border-radius: 10px;
