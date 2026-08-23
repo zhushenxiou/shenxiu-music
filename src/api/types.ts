@@ -180,14 +180,14 @@ export interface VideoType {
  * Banner 轮播图
  *
  * 使用场景：发现页顶部的轮播广告位。
- * `targetType` 决定点击后跳转目标：1000=歌单，10=专辑，其他暂不支持。
+ * `targetType` 决定点击后的行为：1000=歌单，10=专辑，1=新歌首发（直接播放该歌曲）。
  */
 export interface BannerType {
   /** 图片地址 */
   imageUrl: string
-  /** 跳转目标类型：1000=歌单，10=专辑 */
+  /** 跳转目标类型：1000=歌单，10=专辑，1=新歌首发 */
   targetType: number
-  /** 跳转目标 id */
+  /** 跳转目标 id（新歌首发时为歌曲 id） */
   targetId: number
 }
 

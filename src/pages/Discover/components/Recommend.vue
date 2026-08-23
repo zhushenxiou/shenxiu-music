@@ -28,12 +28,15 @@
 import { onMounted, ref } from 'vue'
 import { ArrowRight } from '@element-plus/icons-vue'
 import { bannerApi, personalizedPlaylistApi } from '@/api/discovery'
+import { songDetailsApi } from '@/api/playlist'
 import Playlist from '@/components/common/CPlaylist.vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { usePlayerStore } from '@/stores/player'
 import type { BannerType, PlaylistType } from '@/api/types'
 
 const router = useRouter()
+const store = usePlayerStore()
 
 const isLoading = ref(true)
 // 轮播图数据
@@ -55,7 +58,7 @@ async function getData() {
 }
 
 /** 处理点击 banner */
-function handleBanner(banner: BannerType) {
+async function handleBanner(banner: BannerType) {
   if (banner.targetType === 1000) {
     router.push({
       name: 'playlistDetails',
@@ -66,9 +69,30 @@ function handleBanner(banner: BannerType) {
       name: 'albumDetails',
       params: { id: banner.targetId },
     })
+  } else if (banner.targetType === 1) {
+    // 新歌首发：直接播放这首新歌
+    await playNewSong(banner.targetId)
   } else {
     ElMessage.info('特殊Banner,暂时无法处理')
   }
+}
+
+/** 新歌首发：插入到播放列表末尾并播放（已存在则不重复添加） */
+async function playNewSong(songId: number) {
+  const res = await songDetailsApi(String(songId))
+  const song = res.songs[0]
+  if (!song) {
+    ElMessage.warning('获取新歌失败')
+    return
+  }
+  // 去重：歌单中已存在则不再重复添加
+  if (!store.playlist.some((item) => item.id === song.id)) {
+    store.playlist = [...store.playlist, song]
+  }
+  store.isPlaying = false
+  // 定位到这首歌并播放
+  store.index = store.playlist.findIndex((item) => item.id === song.id)
+  store.updateCurSong()
 }
 
 onMounted(() => {

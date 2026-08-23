@@ -72,8 +72,8 @@ function addIndex({ row, rowIndex }: { row: SongType; rowIndex: number }) {
 
 /** 播放音乐 */
 async function playSong(row: SongType) {
-  // 如果歌单已经变了，就改变歌单
-  if (props.songlist != store.playlist) {
+  // 如果歌单已经变了，就改变歌单（引用比较，O(1) 不遍历数组）
+  if (props.songlist !== store.playlist) {
     store.playlist = props.songlist
   }
   // 如果之前有正在播放的歌曲，则先将其执行暂停操作再进行后续步骤
