@@ -4,7 +4,6 @@ export const optimizeImageUrl = (url: string | undefined, width = 200, height = 
   const separator = url.includes("?") ? "&" : "?"
   return `${url}${separator}param=${width}y${height}`
 }
-
 // 播放量格式化,千，万，亿，单位
 export const formatPlayCount = (count: number) => {
   if (typeof count !== 'number' || count < 0) {

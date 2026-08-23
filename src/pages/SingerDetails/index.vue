@@ -9,11 +9,7 @@
         crossorigin="anonymous"
         class="w-40 h-40 rounded-xl"
         @load="onMainBgChange"
-      >
-        <template #placeholder>
-          <div class="image-slot">加载中<span class="dot">...</span></div>
-        </template>
-      </el-image>
+      />
       <div class="ml-4">
         <div class="flex items-center mb-4">
           <span

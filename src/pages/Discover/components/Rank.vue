@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toplistApi } from '@/api/discovery'
 import type { ToplistItemType } from '@/api/types'
@@ -77,5 +77,7 @@ function toPlaylistDetails(id: number) {
   })
 }
 
-getToplist()
+onMounted(() => {
+  getToplist()
+})
 </script>

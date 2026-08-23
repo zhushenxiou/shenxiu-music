@@ -8,11 +8,7 @@
         crossorigin="anonymous"
         class="w-40 h-40 rounded-xl"
         @load="onMainBgChange"
-      >
-        <template #placeholder>
-          <div class="image-slot">加载中<span class="dot">...</span></div>
-        </template>
-      </el-image>
+      />
       <div class="flex-1 ml-8">
         <!-- 标题 -->
         <div class="flex items-center mb-4">
@@ -24,11 +20,7 @@
         </div>
         <!-- 作者信息 -->
         <div class="flex items-center mb-4">
-          <el-image :src="playlistDetails.creator.backgroundUrl" class="h-8 w-8 mr-2">
-            <template #placeholder>
-              <div class="image-slot">加载中<span class="dot">...</span></div>
-            </template>
-          </el-image>
+          <el-image :src="playlistDetails.creator.backgroundUrl" class="h-8 w-8 mr-2 rounded-lg"/>
           <span
             class="text-blue-500 cursor-pointer mr-2"
             @click="toUserDetails(playlistDetails.creator.userId)"

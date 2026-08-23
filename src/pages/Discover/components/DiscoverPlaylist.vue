@@ -1,7 +1,9 @@
 <template>
-  <div class="discoveryPlaylist">
+  <div
+    class="discoveryPlaylist h-[calc(100vh-120px)] w-full overflow-y-auto [&::-webkit-scrollbar]:hidden"
+  >
     <!-- 歌单分类 -->
-    <div class="category">
+    <div class="flex h-8 items-center justify-between mb-4">
       <!-- 热门标签 -->
       <div class="hotCategory">
         <el-button color="#ed5736" plain v-for="(h, index) in hotTag" :key="index" @click="changeHotCategory(index)">
@@ -11,9 +13,9 @@
     </div>
     <div class="w-full" v-loading="loading">
       <!-- 歌单列表 -->
-      <Playlist :playlists="playlists" :type="'playlist'" />
+      <CPlaylist :playlists="playlists" :type="'playlist'" />
       <!-- 哨兵元素：进入视口时触发加载更多 -->
-      <div v-if="hasMore" ref="sentinelRef" class="loading-more">
+      <div v-if="hasMore" ref="sentinelRef" class="text-center p-4 text-[#999] text-[0.9rem]">
         {{ loadingMore ? '加载中...' : '滚动到底部加载更多' }}
       </div>
     </div>
@@ -27,7 +29,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { hotTagApi, handpickApi } from '@/api/discovery'
-import Playlist from '@/components/common/CPlaylist.vue'
+import CPlaylist from '@/components/common/CPlaylist.vue'
 import type { TagType, PlaylistType } from '@/api/types'
 
 const loading = ref(true)
@@ -125,40 +127,3 @@ onUnmounted(() => {
   observer = null
 })
 </script>
-
-<style lang="less">
-.discoveryPlaylist {
-  height: calc(100vh - 120px); // 设置合适的高度以允许滚动
-  width: 100%;
-  overflow-y: auto;
-
-  // 关闭滚动条样式
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  .category {
-    display: flex;
-    height: 2rem;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 0.5rem;
-    margin-bottom: 1rem;
-
-    .currentSelect {
-      height: 2rem;
-      border-radius: 1rem;
-      border: 1px solid #ddd;
-      color: black;
-      font-weight: 600;
-    }
-  }
-
-  .loading-more {
-    text-align: center;
-    padding: 1rem;
-    color: #999;
-    font-size: 0.9rem;
-  }
-}
-</style>

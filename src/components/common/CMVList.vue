@@ -30,15 +30,17 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { formatPlayCount, optimizeImageUrl } from '@/utils/format'
+import { formatPlayCount } from '@/utils/format'
+import { optimizeImageUrl } from '@/utils/format'
+import type { VideoType } from '@/api/types'
 
 const router = useRouter()
-const { videoData } = defineProps(['videoData'])
+const { videoData } = defineProps<{ videoData: VideoType[] }>()
 
 function toVideoDetails(id: number) {
   router.push({
     name: 'videoDetails',
-    params: { id },
+    params: { id }
   })
 }
 </script>

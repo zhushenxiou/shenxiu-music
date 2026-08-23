@@ -1,19 +1,20 @@
 <template>
-  <div class="recommend" v-loading="isLoading">
+  <div v-loading="isLoading">
     <!-- 轮播图 -->
-    <div class="banner">
-      <el-carousel :interval="4000" type="card" height="100%" v-if="banners">
-        <el-carousel-item v-for="(banner, index) in banners" :key="index">
-          <img :src="banner.imageUrl" alt="" @click="handleBanner(banner)" />
+    <!-- banner 图片(type=0)约为 1080*300，高度按宽度比例自适应，不再写死固定高度 -->
+    <div class="w-full aspect-[18/5]">
+      <el-carousel :interval="4000" type="card" height="100%" class="h-full" v-if="banners">
+        <el-carousel-item v-for="(banner, index) in banners" :key="index" class="rounded-[10px]">
+          <img :src="banner.imageUrl" alt="" class="w-full h-full" @click="handleBanner(banner)" />
         </el-carousel-item>
       </el-carousel>
     </div>
     <!-- 推荐歌单 -->
-    <div class="personalized">
+    <div class="w-full">
       <!-- 标题 -->
-      <div class="title">
+      <div class="mb-2 cursor-default leading-6 text-2xl font-bold">
         <span>推荐歌单</span>
-        <el-icon>
+        <el-icon class="relative top-[0.2rem]">
           <ArrowRight />
         </el-icon>
       </div>
@@ -24,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ArrowRight } from '@element-plus/icons-vue'
 import { bannerApi, personalizedPlaylistApi } from '@/api/discovery'
 import Playlist from '@/components/common/CPlaylist.vue'
@@ -35,22 +36,26 @@ import type { BannerType, PlaylistType } from '@/api/types'
 const router = useRouter()
 
 const isLoading = ref(true)
+// 轮播图数据
 const banners = ref<BannerType[]>([])
 /** 推荐歌单列表 */
 const playlists = ref<PlaylistType[]>([])
 
 async function getData() {
   isLoading.value = true
-  const bannersRes = await bannerApi()
-  banners.value = bannersRes.banners
-  const playlistRes = await personalizedPlaylistApi()
-  playlists.value = playlistRes.result
-  isLoading.value = false
+  try{
+    const [bannersRes, playlistRes] = await Promise.all([bannerApi(), personalizedPlaylistApi()])
+    banners.value = bannersRes.banners
+    playlists.value = playlistRes.result
+  } catch (error) {
+    console.error('获取数据失败:', error)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 /** 处理点击 banner */
 function handleBanner(banner: BannerType) {
-  console.log(banner)
   if (banner.targetType === 1000) {
     router.push({
       name: 'playlistDetails',
@@ -66,48 +71,7 @@ function handleBanner(banner: BannerType) {
   }
 }
 
-// 获取数据
-getData()
+onMounted(() => {
+  getData()
+})
 </script>
-
-<style lang="less" scoped>
-.recommend {
-  padding: 0 1rem;
-
-  .banner {
-    width: 100%;
-    // banner 图片(type=0)约为 1080*300，高度按宽度比例自适应，不再写死固定高度
-    aspect-ratio: 18 / 5;
-
-    .el-carousel {
-      height: 100%;
-    }
-
-    .el-carousel__item {
-      border-radius: 10px;
-
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
-  .personalized {
-    width: 100%;
-
-    .title {
-      margin-bottom: 0.5rem;
-      cursor: default;
-      line-height: 24px;
-      font-size: 24px;
-      font-weight: bold;
-
-      .el-icon {
-        position: relative;
-        top: 0.2rem;
-      }
-    }
-  }
-}
-</style>

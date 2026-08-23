@@ -11,7 +11,7 @@
     <!-- 右侧：header + main -->
     <div class="flex-1 flex flex-col overflow-hidden">
       <Header />
-      <main ref="mainRef" class="flex-1 overflow-y-auto p-6 pb-21 transition-colors duration-500">
+      <main ref="mainRef" class="flex-1 overflow-y-auto p-6 pb-24 transition-colors duration-500">
         <RouterView v-slot="{ Component }" :key="route.fullPath">
           <transition name="fade">
             <component :is="Component" />

@@ -1,11 +1,20 @@
 <template>
-  <div class="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
-    <div v-for="item in singerlist" :key="item.id"
-      class="relative cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-105"
-      @click="toSingerDetails(item.id)">
+  <div class="w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+    <div
+      v-for="item in singerlist"
+      :key="item.id"
+      class="relative cursor-pointer overflow-hidden rounded-lg"
+      @click="toSingerDetails(item.id)"
+    >
       <div class="w-full aspect-square overflow-hidden">
-        <el-image :src="optimizeImageUrl(item.picUrl, 250, 250)" fit="cover" class="w-full h-full"
-          lazy crossorigin="anonymous" @load="(e: Event) => onImageLoad(item.id, e)">
+        <el-image
+          :src="optimizeImageUrl(item.picUrl)"
+          fit="cover"
+          class="w-full h-full"
+          lazy
+          crossorigin="anonymous"
+          @load="(e: Event) => onImageLoad(item.id, e)"
+        >
           <template #placeholder>
             <div class="image-slot">加载中<span class="dot">...</span></div>
           </template>
@@ -16,7 +25,7 @@
         :style="{
           background: themeColors[item.id]
             ? `linear-gradient(to right, ${themeColors[item.id]}, rgba(0,0,0,0.85))`
-            : 'linear-gradient(to right, #1f2937, #111827)',
+            : 'linear-gradient(to right, #1f2937, #111827)'
         }"
       >
         <span class="block h-[1.5rem] text-center text-sm">{{ item.name }}</span>
@@ -30,8 +39,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { optimizeImageUrl } from '@/utils/format'
 import { extractColorFromImage } from '@/utils/color'
+import type { ArtistType } from '@/api/types'
 
-const { singerlist } = defineProps(['singerlist'])
+const { singerlist } = defineProps<{ singerlist: ArtistType[] }>()
 
 const router = useRouter()
 
@@ -50,7 +60,7 @@ async function onImageLoad(id: number, e: Event) {
 function toSingerDetails(id: number) {
   router.push({
     name: 'singerDetails',
-    params: { id },
+    params: { id }
   })
 }
 </script>

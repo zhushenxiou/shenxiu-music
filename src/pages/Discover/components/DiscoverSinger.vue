@@ -1,44 +1,22 @@
 <template>
-  <div class="singer">
+  <div class="h-full">
     <!-- 歌手分类 -->
-    <div class="category">
-      <!-- 地区分类 -->
-      <div class="area">
-        <div class="opts">
+    <div class="my-4">
+      <!-- 地区/性别/首字母 三类筛选共用一套渲染逻辑 -->
+      <div v-for="cfg in singerCategory" :key="cfg.opt" class="flex items-start my-4">
+        <div class="flex flex-wrap gap-1 text-sm">
           <div
-            :class="{ opt: true, selected: area.key === condition.areaKey }"
-            v-for="(area, i) in category.area"
-            :key="i"
-            @click="switchOpt(area.key, 'area')"
+            v-for="item in cfg.options"
+            :key="item.key"
+            class="px-3 py-2 rounded-lg cursor-pointer border transition-all duration-300 hover:-translate-y-0.5"
+            :class="
+              item.key === condition[cfg.selectedKey]
+                ? 'text-[#ec4141] bg-[rgba(236,65,65,0.08)] border-[rgba(236,65,65,0.2)]'
+                : 'bg-white border-[#eee] hover:bg-[rgba(236,65,65,0.08)] hover:border-[rgba(236,65,65,0.2)]'
+            "
+            @click="switchOpt(item.key, cfg.opt)"
           >
-            <span>{{ area.name }}</span>
-          </div>
-        </div>
-      </div>
-      <!-- 性别分类 -->
-      <div class="type">
-        <div class="opts">
-          <div
-            :class="{ opt: true, selected: type.key === condition.typeKey }"
-            v-for="(type, i) in category.type"
-            :key="i"
-            @click="switchOpt(type.key, 'type')"
-          >
-            <span>{{ type.name }}</span>
-          </div>
-        </div>
-      </div>
-      <!-- 首字母分类 -->
-      <div class="initial">
-        <div class="opts">
-          <div
-            :class="{ opt: true, selected: initial.key === condition.initialKey }"
-            id="initial"
-            v-for="(initial, i) in category.initial"
-            :key="i"
-            @click="switchOpt(initial.key, 'initial')"
-          >
-            <span>{{ initial.name }}</span>
+            <span>{{ item.name }}</span>
           </div>
         </div>
       </div>
@@ -46,32 +24,86 @@
     <!-- 歌手列表 -->
     <CSingerList :singerlist="singerlist" v-loading="isLoading" />
     <!-- 是否继续加载 -->
-    <div class="continueLoading">
+    <div class="flex justify-center p-2" v-show="!isLoading">
       <el-button color="#ed5736" plain @click="continueLoading">点击查看更多</el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { staticSingerCategory } from '../static/useStaticData'
+import { ref, reactive, onMounted } from 'vue'
 import { singerlistApi } from '@/api/discovery'
 import { ElMessage } from 'element-plus'
 import CSingerList from '@/components/common/CSingerList.vue'
 import type { ArtistType } from '@/api/types'
 
-const category = staticSingerCategory
+// ==================== 歌手分类静态数据 ====================
+
+const singerCategory = [
+  {
+    // 地区分类
+    opt: 'area',
+    selectedKey: 'areaKey',
+    options: [
+      { key: -1, name: '全部' },
+      { key: 7, name: '华语' },
+      { key: 96, name: '欧美' },
+      { key: 8, name: '日本' },
+      { key: 16, name: '韩国' },
+      { key: 0, name: '其他' },
+    ],
+  },
+  {
+    // 类型分类
+    opt: 'type',
+    selectedKey: 'typeKey',
+    options: [
+      { key: -1, name: '全部' },
+      { key: 1, name: '男歌手' },
+      { key: 2, name: '女歌手' },
+      { key: 3, name: '乐队' },
+    ],
+  },
+  {
+    // 首字母分类
+    opt: 'initial',
+    selectedKey: 'initialKey',
+    options: [
+      { key: '-1', name: '热门' },
+      { key: 'a', name: 'A' },
+      { key: 'b', name: 'B' },
+      { key: 'c', name: 'C' },
+      { key: 'd', name: 'D' },
+      { key: 'e', name: 'E' },
+      { key: 'f', name: 'F' },
+      { key: 'g', name: 'G' },
+      { key: 'h', name: 'H' },
+      { key: 'i', name: 'I' },
+      { key: 'j', name: 'J' },
+      { key: 'k', name: 'K' },
+      { key: 'l', name: 'L' },
+      { key: 'm', name: 'M' },
+      { key: 'n', name: 'N' },
+      { key: 'o', name: 'O' },
+      { key: 'p', name: 'P' },
+      { key: 'q', name: 'Q' },
+      { key: 'r', name: 'R' },
+      { key: 's', name: 'S' },
+      { key: 't', name: 'T' },
+      { key: 'u', name: 'U' },
+      { key: 'v', name: 'V' },
+      { key: 'w', name: 'W' },
+      { key: 'x', name: 'X' },
+      { key: 'y', name: 'Y' },
+      { key: 'z', name: 'Z' },
+      { key: '0', name: '#' },
+    ],
+  },
+] as const
 
 const isLoading = ref(true)
 /** 歌手分类查询条件 */
-const condition = reactive<{
-  areaKey: number
-  typeKey: number
-  initialKey: string
-  count: number
-  limit: number
-  isMore: boolean
-}>({
+const condition = reactive({
   areaKey: -1,
   typeKey: -1,
   initialKey: '-1',
@@ -84,16 +116,22 @@ const singerlist = ref<ArtistType[]>([])
 
 async function getSingerlist() {
   isLoading.value = true
-  const res = await singerlistApi(
-    condition.areaKey,
-    condition.typeKey,
-    condition.initialKey,
-    (condition.count - 1) * condition.limit,
-    condition.limit,
-  )
-  singerlist.value.push(...res.artists)
-  condition.isMore = res.more
-  isLoading.value = false
+  try {
+    const res = await singerlistApi(
+      condition.areaKey,
+      condition.typeKey,
+      condition.initialKey,
+      (condition.count - 1) * condition.limit,
+      condition.limit,
+    )
+    singerlist.value.push(...res.artists)
+    condition.isMore = res.more
+  } catch (error) {
+    console.error('获取歌手列表失败:', error)
+    ElMessage.error('获取歌手列表失败，请稍后重试！')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 /** 切换分类条件 */
@@ -121,59 +159,7 @@ function continueLoading() {
   }
 }
 
-getSingerlist()
+onMounted(() => {
+  getSingerlist()
+})
 </script>
-
-<style lang="less" scoped>
-.singer {
-  padding: 0 0.5rem;
-  height: 100%;
-
-  .category {
-    margin: 1rem 0;
-
-    .area,
-    .type,
-    .initial {
-      display: flex;
-      align-items: flex-start;
-      margin: 1rem 0;
-
-      .opts {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-left: 12px;
-        font-size: 14px;
-
-        .opt {
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          background: #fff;
-          border: 1px solid #eee;
-
-          &:hover {
-            background: rgba(236, 65, 65, 0.08);
-            border-color: rgba(236, 65, 65, 0.2);
-            transform: translateY(-2px);
-          }
-
-          &.selected {
-            color: #ec4141;
-            background: rgba(236, 65, 65, 0.08);
-            border-color: rgba(236, 65, 65, 0.2);
-          }
-        }
-      }
-    }
-  }
-
-  .continueLoading {
-    display: flex;
-    justify-content: center;
-    padding: 0.5rem;
-  }
-}
-</style>

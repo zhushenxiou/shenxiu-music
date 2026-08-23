@@ -11,10 +11,10 @@ export interface ArtistType {
   id: number
   /** 歌手名称 */
   name: string
-  /** 歌手头像（1:1 比例，通常较小），部分接口返回 */
-  img1v1Url?: string
-  /** 歌手图片，部分接口返回 */
+  /** 歌手头像 */
   picUrl?: string
+  /** 歌手方形头像，部分接口（如 MV 详情）返回 */
+  img1v1Url?: string
 }
 
 /**
@@ -31,6 +31,23 @@ export interface AlbumType {
   picUrl?: string
   /** 专辑高斯模糊封面，用于背景展示 */
   blurPicUrl?: string
+}
+
+/**
+ * 歌单/专辑卡片列表项（CPlaylist 组件）
+ *
+ * 使用场景：CPlaylist 组件展示歌单/专辑卡片列表时所需的最小字段。
+ * 歌单（PlaylistType）和专辑（AlbumType）均满足此结构，可直接传入。
+ */
+export interface PlaylistCardType {
+  /** 歌单/专辑唯一标识 */
+  id: number
+  /** 歌单/专辑名称 */
+  name: string
+  /** 封面图，专辑接口通常直接返回 picUrl */
+  picUrl?: string
+  /** 播放次数，专辑数据可能不返回 */
+  playCount?: number
 }
 
 /**
@@ -140,6 +157,23 @@ export interface MVType {
   publishTime: string
   /** 视频时长（毫秒） */
   duration?: number
+}
+
+/**
+ * 视频/MV 列表项
+ *
+ * 使用场景：MV 列表、搜索结果中的 MV 等列表卡片展示（CMVList 组件）。
+ * 字段与 MVType 兼容，MV 接口返回的数据可直接复用。
+ */
+export interface VideoType {
+  /** 视频唯一标识 */
+  id: number
+  /** 视频名称/标题 */
+  name: string
+  /** 视频封面图 */
+  cover: string
+  /** 播放次数，部分接口可能不返回 */
+  playCount?: number
 }
 
 /**
