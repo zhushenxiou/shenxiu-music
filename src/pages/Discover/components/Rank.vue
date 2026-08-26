@@ -5,7 +5,7 @@
       <div class="title flex justify-center mb-4 leading-[22px] text-[22px] font-bold cursor-default">官 方 榜</div>
       <div class="content grid grid-cols-2">
         <div
-          class="item h-[150px] border border-gray-200 rounded-2xl m-4 flex cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
+          class="item h-[150px] border border-gray-200 rounded-2xl m-4 flex cursor-pointer"
           v-for="item in officialToplist"
           :key="item.id"
           @click="toPlaylistDetails(item.id)"
@@ -30,7 +30,7 @@
       <div class="title flex justify-center mb-4 leading-[22px] text-[22px] font-bold cursor-default">全 球 榜</div>
       <div class="content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         <div
-          class="item text-center m-4 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
+          class="item text-center m-4 cursor-pointer group"
           v-for="item in globalToplist"
           :key="item.id"
           @click="toPlaylistDetails(item.id)"
@@ -40,7 +40,7 @@
               <div class="image-slot flex justify-center items-center">加载中<span class="dot">...</span></div>
             </template>
           </el-image>
-          <span class="text-[13px] hover:text-red-500 hover:border-b hover:border-red-500">{{ item.name }}</span>
+          <span class="text-[13px] group-hover:text-red-500 group-hover:border-b group-hover:border-red-500">{{ item.name }}</span>
         </div>
       </div>
     </div>

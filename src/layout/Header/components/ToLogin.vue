@@ -1,18 +1,18 @@
 <template>
-  <div class="toLogin">
+  <div class="toLogin flex [--el-message-close-size:24px]">
     <!-- 未登录时展示 -->
-    <div v-if="!cookie" class="clickLogin">
+    <div v-if="!cookie" class="clickLogin ml-auto flex cursor-pointer items-center justify-center">
       <span @click="loginDialogIsVisible = true">点击登录</span>
     </div>
     <!-- 登录时展示 -->
-    <div v-if="cookie" class="userInfo" @click="toUserDetails">
+    <div v-if="cookie" class="userInfo ml-auto flex cursor-pointer items-center justify-center" @click="toUserDetails">
       <!-- 用户头像 -->
-      <img :src="accountInfo.avatarUrl" alt="" />
+      <img :src="accountInfo.avatarUrl" alt="" class="mx-[5px] w-10 cursor-pointer rounded-full align-middle" />
       <!-- 用户名称 -->
-      <span>{{ accountInfo.nickname }}</span>
+      <span class="font-['等线'] text-[15px] text-black">{{ accountInfo.nickname }}</span>
       <!-- 退出登录 -->
-      <div class="quit" v-if="cookie">
-        <el-button :icon="SwitchButton" circle size="large" @click="quitDialogIsVisible = true" />
+      <div class="quit mx-5 flex items-center justify-center" v-if="cookie">
+        <el-button :icon="SwitchButton" circle size="large" class="!border-0 !bg-[#ddd]" @click="quitDialogIsVisible = true" />
       </div>
     </div>
     <!-- 登录页面弹窗 -->
@@ -46,7 +46,7 @@ import { getAccountInfoApi, logoutApi } from '@/api/login'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
 import { SwitchButton } from '@element-plus/icons-vue'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import Login from '@/components/Login/index.vue'
 
@@ -54,7 +54,6 @@ const userStore = useUserStore()
 
 const loginDialogIsVisible = ref(false)
 const quitDialogIsVisible = ref(false)
-const loginRef = ref(null)
 
 // 处理弹窗关闭事件
 function closeDialog() {
@@ -107,52 +106,7 @@ function toUserDetails() {
   })
 }
 
-getAccountInfo()
+onMounted(()=>{
+  getAccountInfo()
+})
 </script>
-
-<style lang="less" scoped>
-.toLogin {
-  display: flex;
-  // 弹窗的关闭按钮大小
-  --el-message-close-size: 24px;
-
-  .clickLogin {
-    cursor: pointer;
-  }
-
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-
-    img {
-      width: 40px;
-      border-radius: 50%;
-      vertical-align: middle;
-      margin: 0 5px;
-      cursor: pointer;
-    }
-
-    span {
-      color: black;
-      font-family: '等线';
-      font-size: 15px;
-    }
-  }
-
-  .userInfo {
-    cursor: pointer;
-  }
-
-  .quit {
-    margin: 0 20px;
-
-    .el-button {
-      background-color: #eee;
-      color: white;
-      border: 0;
-    }
-  }
-}
-</style>
