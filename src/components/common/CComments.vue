@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   songCommentApi,
@@ -50,10 +50,12 @@ import {
   albumCommentApi,
   mvCommentApi,
 } from '@/api/comment'
+import { usePlayerStore } from '@/stores/player'
 import { optimizeImageUrl } from '@/utils/format'
 import type { CommentType } from '@/api/types'
 
 const router = useRouter()
+const playerStore = usePlayerStore()
 
 const props = defineProps<{ type: string; id: string | string[] | number }>()
 
@@ -79,13 +81,17 @@ async function getComments() {
 }
 
 function toUserDetails(id: number) {
+  // 如果歌单详情页抽屉打开，需要关闭
+  playerStore.showSongDetails = false
   router.push({
     name: 'userDetails',
     params: { id },
   })
 }
 
-getComments()
+onMounted(() => {
+  getComments()
+})
 </script>
 
 <style lang="less" scoped>
