@@ -1,5 +1,5 @@
 import request from '../utils/request'
-import type { UserProfileType, FollowUserType, PlaylistType } from './types'
+import type { UserProfileType, FollowUserType, PlaylistType, UserEventType } from './types'
 
 // ==================== 响应类型 ====================
 
@@ -18,6 +18,14 @@ export interface UserFollowsResponse {
 
 export interface UserFollowedsResponse {
   followeds: FollowUserType[]
+}
+
+export interface UserEventResponse {
+  events: UserEventType[]
+  /** 是否还有下一页 */
+  more: boolean
+  /** 下一页游标 */
+  lasttime: number
 }
 
 // ==================== API 函数 ====================
@@ -53,3 +61,12 @@ export const userFollowedsApi = (id: number | string | string[]) => {
     method: 'GET',
   })
 }
+
+/** 获取用户动态（分页游标 lasttime，本人与他人统一走此接口） */
+export const userEventApi = (id: number | string | string[], lasttime = -1, limit = 10) => {
+  return request<UserEventResponse>({
+    url: `/user/event?uid=${id}&limit=${limit}&lasttime=${lasttime}`,
+    method: 'GET',
+  })
+}
+

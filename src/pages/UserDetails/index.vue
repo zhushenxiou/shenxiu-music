@@ -3,7 +3,7 @@
   <div>
     <!-- 用户信息 -->
     <UserInfo :user-info="userInfo" :loading="isLoading" @relation="openRelation" />
-    <!-- 创建/收藏的歌单 -->
+    <!-- 歌单/动态 -->
     <el-tabs v-model="activeTab" class="mt-2">
       <el-tab-pane :label="`${pronoun}创建的歌单`" name="created">
         <CPlaylist v-if="createdPlaylist.length" :playlists="createdPlaylist" />
@@ -12,6 +12,10 @@
       <el-tab-pane :label="`${pronoun}收藏的歌单`" name="subscribed">
         <CPlaylist v-if="subscribedPlaylist.length" :playlists="subscribedPlaylist" />
         <div v-else-if="!isLoading" class="text-center text-[#999] py-10">暂无收藏的歌单</div>
+      </el-tab-pane>
+      <el-tab-pane :label="`${pronoun}的动态`" name="events">
+        <!-- 首次切到该 tab 才挂载并拉取，切走再切回会重新拉取保证新鲜 -->
+        <UserEvent v-if="activeTab === 'events'" :user-id="id" :user="userInfo" />
       </el-tab-pane>
     </el-tabs>
     <!-- 关注/粉丝弹窗 -->
@@ -32,6 +36,7 @@ import { userDetailsApi, userPlaylistApi, userFollowsApi, userFollowedsApi } fro
 import CPlaylist from '@/components/common/CPlaylist.vue'
 import UserInfo from './components/UserInfo.vue'
 import UserRelationDialog from './components/UserRelationDialog.vue'
+import UserEvent from './components/UserEvent.vue'
 import { useUserStore } from '@/stores/user'
 import type { UserProfileType, PlaylistType, FollowUserType } from '@/api/types'
 

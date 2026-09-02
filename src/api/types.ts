@@ -274,3 +274,30 @@ export interface FollowUserType {
   /** 关注数 */
   follows?: number
 }
+
+/**
+ * 用户动态（来自 /user/event）
+ *
+ * `type` 决定动作文案；具体内容在不同 type 下各不相同，
+ * 多数放在 `json`（JSON 字符串）里。字段弱类型、防御式解析。
+ */
+export interface UserEventType {
+  /** 动态唯一标识 */
+  id: number | string
+  /** 动态类型，文案映射见 UserEvent.vue */
+  type: number
+  /** 动态发生时间（秒），注意与项目内其他毫秒时间戳不同 */
+  showTime?: number
+  /** 部分类型直接携带的封面图（预留） */
+  picUrl?: string
+  /** 动态主体内容（JSON 字符串，不同 type 结构不同） */
+  json?: string
+  /** 接口返回的动作文案兜底（如"转发了动态"） */
+  actName?: string
+  /** 转发数 */
+  forwardCount?: number
+  /** 评论数 */
+  commentCount?: number
+  /** 点赞数 */
+  likedCount?: number
+}
