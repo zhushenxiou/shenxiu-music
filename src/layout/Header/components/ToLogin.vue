@@ -97,7 +97,6 @@ async function getAccountInfo() {
   }
   accountInfo.value = res.profile
   userStore.uid = res.profile.userId
-  userStore.getUserData()
 }
 
 function toUserDetails() {

@@ -48,7 +48,7 @@ const menus = [
 // 动态计算当前激活的菜单
 const activeMenu = computed(() => {
   if (route.path.startsWith('/discover')) return '/discover/recommend'
-  if (route.path.startsWith(`/userDetails/${userStore.userInfo.userId}`)) return '/userDetails'
+  if (route.path.startsWith(`/userDetails/${userStore.uid}`)) return '/userDetails'
   return route.path // 直接返回当前路由路径
 })
 
@@ -59,7 +59,7 @@ function selectMenu(menu: { path: string; name: string }) {
   }
   // 登录用户的个人用户详情页
   if (menu.name == 'myMusic' && localStorage.getItem('cookie')) {
-    router.push(menu.path + '/' + userStore.userInfo.userId)
+    router.push(menu.path + '/' + userStore.uid)
     return
   }
   // 其他跳转

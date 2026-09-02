@@ -111,18 +111,6 @@ const router = createRouter({
       component: () => import('@/pages/UserDetails/index.vue'),
       name: 'userDetails',
     },
-    // 关注列表
-    {
-      path: '/userDetails/follows/:id',
-      component: () => import('@/pages/UserDetails/Follows.vue'),
-      name: 'follows',
-    },
-    // 粉丝列表
-    {
-      path: '/userDetails/followeds/:id',
-      component: () => import('@/pages/UserDetails/Followeds.vue'),
-      name: 'followeds',
-    },
   ],
 })
 
