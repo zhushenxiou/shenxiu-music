@@ -57,6 +57,7 @@ import { usePlayerStore } from '@/stores/player'
 import { msToMinSeconed } from '@/utils/time'
 import { useRouter } from 'vue-router'
 import { songDownLoadApi } from '@/api/song'
+import { downloadFromUrl } from '@/utils/download'
 import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
 import type { SongType } from '@/api/types'
@@ -98,35 +99,20 @@ function toAlbumDetails(id: number) {
   })
 }
 
-//下载歌曲
+// 下载歌曲
 async function downloadSong(id: number, name: string) {
   try {
-    // 调用 API 并提取 data 中的 url
+    // 调用 API 获取下载链接
     const res = await songDownLoadApi(id)
-    if (res.data && typeof res.data.url === 'string') {
-      const url = res.data.url
-
-      // 根据url获取文件内容
-      const response = await fetch(url)
-      // 将文件内容转成二进制
-      const blob = await response.blob()
-      // 将二进制转成url
-      const urlBlob = window.URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = urlBlob
-      link.download = `${name}.mp3` // 设置文件名
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      // 释放内存
-      window.URL.revokeObjectURL(urlBlob)
-      ElMessage.success('下载成功,320kpbs超高清')
-    } else {
+    const url = res.data?.url
+    if (!url) {
       ElMessage.error('你没有登录或者你不是VIP')
+      return
     }
+    const saved = await downloadFromUrl(url, `${name}.mp3`)
+    if (saved) ElMessage.success('下载成功, 320kpbs 超高清')
   } catch (error) {
-    ElMessage.error(`下载歌曲时发生错误:${error}`)
+    ElMessage.error(error instanceof Error ? error.message : '下载失败，请稍后重试')
   }
 }
 </script>
