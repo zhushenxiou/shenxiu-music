@@ -3,9 +3,10 @@
     <!-- 选择标签 -->
     <Tabs :tabs="tabs" />
     <!-- Vue3中的 keep-alive让路由组件不被销毁使用方式的变化 -->
-    <router-view v-slot="{ Component }">
+    <!-- 1. 缓存按路由区分：同一个组件被多个路由复用（如不同 id 的详情页）时，每条路径单独缓存一份 -->
+    <router-view v-slot="{ Component, route }">
       <keep-alive>
-        <component :is="Component" />
+        <component :is="Component" :key="route.path" />
       </keep-alive>
     </router-view>
   </div>
