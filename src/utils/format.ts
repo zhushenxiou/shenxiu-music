@@ -27,3 +27,20 @@ export const formatPlayCount = (count: number) => {
   // 处理小于 1000 的情况
   return `${Math.floor(count)}`
 }
+/**
+ * 将时间戳格式化为相对时间：1分钟内「刚刚」，1小时内「x分钟前」，
+ * 24小时内「x小时前」，30天内「x天前」，超过 30 天返回 yyyy-M-d 日期。
+ * 自动兼容秒级与毫秒级时间戳。
+ * @param timestamp 事件时间戳（秒或毫秒），为空时返回空字符串
+ */
+export const formatTime = (timestamp?: number): string => {
+  if (!timestamp) return ''
+  const ms = timestamp > 1e12 ? timestamp : timestamp * 1000 // 统一为毫秒
+  const diff = Date.now() - ms
+  if (diff < 60_000) return '刚刚'
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}分钟前`
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}小时前`
+  if (diff < 86_400_000 * 30) return `${Math.floor(diff / 86_400_000)}天前`
+  const date = new Date(ms)
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+}
