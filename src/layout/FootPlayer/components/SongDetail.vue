@@ -58,8 +58,8 @@ let timer: number | undefined = undefined
 onMounted(() => {
   // 歌词滚动1s刷新一次
   timer = setInterval(() => {
-    // 获取播放到的歌词元素
-    const p: any = document.querySelector('p.active')
+    // 获取播放到的歌词元素（泛型定元素类型，返回值仍含 null，交给下方守卫）
+    const p = document.querySelector<HTMLParagraphElement>('p.active')
     if (p && p.offsetTop > 300) {
       // 改变父元素的顶部位置
       lyric.value.scrollTop = p.offsetTop - 300

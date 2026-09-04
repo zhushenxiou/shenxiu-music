@@ -40,14 +40,24 @@
     <!-- 进度条 -->
     <div class="progressBar">
       <div class="curTime">{{ curTime }}</div>
-      <el-slider v-model="sliderValue" :max="duration" @change="changeDuration" @mousedown="isDragging = true" :show-tooltip="false" />
+      <el-slider
+        v-model="sliderValue"
+        :max="duration"
+        @change="changeDuration"
+        @mousedown="isDragging = true"
+        :show-tooltip="false"
+      />
       <div class="endTime">{{ endTime }}</div>
     </div>
     <!-- 播放音乐的核心组件 autoplay-->
-    <audio ref="audioPlayer" :src="store.curSongUrl" @timeupdate="timeupdate" :autoplay="store.isPlaying"></audio>
+    <audio
+      ref="audioPlayer"
+      :src="store.curSongUrl"
+      @timeupdate="handleTimeupdate"
+      :autoplay="store.isPlaying"
+    ></audio>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { usePlayerStore } from '@/stores/player'
@@ -65,7 +75,6 @@ import IconNext from '@/assets/icon/IconNext.vue'
 import IconVolume from '@/assets/icon/IconVolume.vue'
 import IconMute from '@/assets/icon/IconMute.vue'
 
-
 const store = usePlayerStore()
 
 // 控制audio的Ref
@@ -76,7 +85,6 @@ const loopMode = ref('loop')
 const isDragging = ref(false)
 // 本地滑块值，隔离 timeupdate 的覆盖
 const sliderValue = ref(0)
-
 
 // 当前时间 字符串（跟随滑块值，拖动时不会跳动）
 const curTime = computed(() => {
@@ -90,8 +98,6 @@ const duration = computed(() => {
 const endTime = computed(() => {
   return msToMinSeconed(duration.value)
 })
-
-
 
 // 切换循环模式
 function switchLoopMode() {
@@ -161,7 +167,8 @@ function nextSong() {
 
 // 监听切换歌曲
 watch(
-  () => store.curSongUrl, (val, oldVal) => {
+  () => store.curSongUrl,
+  (val, oldVal) => {
     // 切换的歌曲，更新为0, 且默认播放
     if (val != oldVal) {
       store.curDuration = 0
@@ -193,13 +200,14 @@ function changeVolume(val: number) {
 }
 // 监听是否是静音
 watch(
-  () => isMute.value, () => {
+  () => isMute.value,
+  () => {
     if (isMute.value) {
       audioPlayer.value.volume = 0
     } else {
       audioPlayer.value.volume = curVolume.value / 100
     }
-  }
+  },
 )
 
 // 监听 store.curDuration 同步到本地滑块（拖动期间不同步）
@@ -213,7 +221,12 @@ watch(
 )
 
 // 播放音乐自动触发
-function timeupdate(e: any) {
+function handleTimeupdate(e: Event) {
+  // 类型守卫
+  if (!(e.target instanceof HTMLAudioElement)) {
+    return
+  }
+
   // 拖动进度条时不更新，避免覆盖用户操作
   if (!isDragging.value) {
     store.curDuration = e.target.currentTime * 1000
@@ -238,7 +251,6 @@ function timeupdate(e: any) {
     }
   }
 }
-
 </script>
 
 <style lang="less" scoped>

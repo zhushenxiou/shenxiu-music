@@ -24,7 +24,6 @@ export default defineConfigWithVueTs(
   // 自定义规则覆盖
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off', // 关闭 any 类型检测
       'vue/multi-word-component-names': 'off', // 关闭 Vue 组件名检测
     },
   },
