@@ -1,33 +1,49 @@
 <template>
   <!-- 歌曲详情页 -->
-  <div class="playDetails">
-    <div class="details">
+  <div class="w-full min-h-full" :style="{ background: pageBg }">
+    <div class="flex w-full h-[600px]">
       <!-- 收起抽屉 -->
-      <el-icon class="packUp" @click="store.showSongDetails = false">
+      <el-icon
+        class="absolute top-4 left-8 z-[1] cursor-pointer text-2xl text-gray-800"
+        @click="store.showSongDetails = false"
+      >
         <ArrowDownBold />
       </el-icon>
       <!-- 歌曲信息和图片 -->
-      <div class="left">
+      <div class="flex w-[40%] h-[500px] flex-col items-center gap-4 pt-12">
         <!-- 歌曲图片 -->
-        <div class="songImage">
-          <img :src="store.curSongInfo.al?.picUrl || ''" alt="歌曲封面" />
+        <div class="h-[280px] w-[280px] overflow-hidden rounded-[56px]">
+          <img
+            :src="store.curSongInfo.al?.picUrl || ''"
+            alt="歌曲封面"
+            crossorigin="anonymous"
+            class="h-full w-full object-cover"
+            @load="onCoverLoad"
+          />
         </div>
         <!-- 歌曲信息 -->
-        <div class="songInfo">
-          <p class="name">{{ store.curSongInfo.name }}</p>
-          <div class="author">
-            <p v-for="ar in store.curSongInfo.ar" :key="ar.id">{{ ar.name }}</p>
+        <div class="w-full px-8 text-center">
+          <p class="mb-[0.8rem] truncate text-2xl font-semibold text-black">
+            {{ store.curSongInfo.name }}
+          </p>
+          <div class="mb-[0.8rem] flex flex-wrap justify-center gap-2.5">
+            <p v-for="ar in store.curSongInfo.ar" :key="ar.id" class="text-base text-[#666]">
+              {{ ar.name }}
+            </p>
           </div>
-          <p class="album">{{ store.curSongInfo.al?.name || '' }}</p>
+          <p class="text-sm text-[#999]">{{ store.curSongInfo.al?.name || '' }}</p>
         </div>
       </div>
       <!-- 歌词部分 -->
-      <div class="right">
-        <div class="lyric" ref="lyric">
+      <div class="w-[60%] h-[500px] pt-12 pr-8">
+        <div ref="lyric" class="w-full h-[450px] overflow-y-auto py-4 text-center">
           <p
             v-for="(item, index) in store.lyric"
             :key="index"
-            :class="{ active: store.curDuration >= item.time && store.curDuration <= item.next }"
+            :class="[
+              'mb-6 text-base leading-[1.6] transition-all duration-300',
+              isActiveLyric(item) ? 'active text-lg font-medium text-[#ec4141]' : '',
+            ]"
           >
             {{ item.lrc }}
           </p>
@@ -35,7 +51,7 @@
       </div>
     </div>
     <!-- 歌曲评论 -->
-    <div class="comment" v-show="store.curSongInfo.id">
+    <div v-show="store.curSongInfo.id" class="px-6">
       <CComments :type="'song'" :id="store.curSongInfo.id" :key="store.curSongInfo.id" />
     </div>
   </div>
@@ -43,14 +59,56 @@
 
 <script setup lang="ts">
 import { usePlayerStore } from '@/stores/player'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import CComments from '@/components/common/CComments.vue'
 import { ArrowDownBold } from '@element-plus/icons-vue'
+import { extractColorFromImage } from '@/utils/color'
 
 const store = usePlayerStore()
 
 // 歌词
 const lyric = ref()
+
+/** 从当前歌曲封面提取的主题色（空串表示尚未提取成功，用默认浅色渐变兜底） */
+const themeColor = ref('')
+/** 封面加载中/无封面时的默认浅色渐变 */
+const defaultBg = 'linear-gradient(180deg, #eef2f6 0%, #ffffff 100%)'
+
+/** 将 rgb 字符串按 mix 比例混入白色，返回偏浅的 rgb 字符串（mix 越大越接近纯白） */
+function mixWhite(rgb: string, mix: number) {
+  const [r, g, b] = (rgb.match(/\d+/g) ?? []).map(Number)
+  if (r == null || g == null || b == null) return ''
+  const m = (v: number) => Math.round(v * (1 - mix) + 255 * mix)
+  return `rgb(${m(r)}, ${m(g)}, ${m(b)})`
+}
+
+/** 整页背景：封面主题色浅化后向下渐变为白，保证黑色文字可读 */
+const pageBg = computed(() =>
+  themeColor.value
+    ? `linear-gradient(180deg, ${mixWhite(themeColor.value, 0.85)} 0%, ${mixWhite(
+        themeColor.value,
+        0.93,
+      )} 35%, #ffffff 70%)`
+    : defaultBg,
+)
+
+// 切换歌曲时清空旧主题色，等待新封面加载完成后再提取
+watch(
+  () => store.curSongInfo.id,
+  () => {
+    themeColor.value = ''
+  },
+)
+
+// 封面加载完成后提取主题色作为整页背景渐变（复用已显示的图片，不二次下载）
+async function onCoverLoad(e: Event) {
+  themeColor.value = await extractColorFromImage(e.target as HTMLImageElement)
+}
+
+// 判断某句歌词是否为当前播放行（同步模板里的高亮/滚动逻辑）
+function isActiveLyric(item: { time: number; next: number }) {
+  return store.curDuration >= item.time && store.curDuration <= item.next
+}
 
 let timer: number | undefined = undefined
 
@@ -72,111 +130,3 @@ onUnmounted(() => {
   clearInterval(timer)
 })
 </script>
-
-<style lang="less">
-.playDetails {
-  height: 100%;
-  width: 100%;
-
-  .details {
-    width: 100%;
-    height: 600px;
-    display: flex;
-
-    .el-icon {
-      position: absolute;
-      cursor: pointer;
-      top: 1rem;
-      left: 2rem;
-      font-size: 24px;
-      z-index: 1;
-    }
-
-    .left {
-      width: 40%;
-      height: 500px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 3rem;
-
-      .songImage {
-        width: 280px;
-        height: 280px;
-        margin-bottom: 2rem;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 16px;
-        }
-      }
-
-      .songInfo {
-        width: 100%;
-        text-align: center;
-        padding: 0 2rem;
-
-        .name {
-          font-weight: 600;
-          font-size: 24px;
-          margin-bottom: 0.8rem;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .author {
-          display: flex;
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: 10px;
-          margin-bottom: 0.8rem;
-
-          p {
-            font-size: 16px;
-            color: #666;
-          }
-        }
-
-        .album {
-          font-size: 14px;
-          color: #999;
-        }
-      }
-    }
-
-    .right {
-      width: 60%;
-      height: 500px;
-      padding: 3rem 2rem 0 0;
-
-      .lyric {
-        width: 100%;
-        height: 450px;
-        padding: 1rem 0;
-        text-align: center;
-        overflow-y: auto;
-
-        p {
-          margin-bottom: 1.5rem;
-          font-size: 16px;
-          line-height: 1.6;
-          transition: all 0.3s ease;
-        }
-
-        .active {
-          color: #ec4141;
-          font-size: 18px;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-
-  .comment {
-    padding: 0 1.5rem;
-  }
-}
-</style>

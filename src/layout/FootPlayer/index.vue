@@ -1,9 +1,6 @@
 <template>
   <!-- 底部栏播放器 -->
-  <div
-    class="player"
-    :style="{ background: bgColorStore.bgColor }"
-  >
+  <div class="player" :style="{ background: bgColorStore.bgColor }">
     <!-- 歌曲信息 -->
     <div class="left" @click="store.showSongDetails = !store.showSongDetails">
       <div class="img">
@@ -23,6 +20,7 @@
         direction="btt"
         :append-to-body="true"
         :size="'100%'"
+        :style="`--el-dialog-padding-primary: 0px`"
       >
         <PlayDetails />
       </el-drawer>
