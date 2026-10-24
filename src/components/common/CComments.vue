@@ -1,13 +1,13 @@
 <template>
   <!-- 封装评论组件 -->
-  <div class="mt-4 h-auto w-full">
+  <div class="mt-4">
     <!-- 热门评论 -->
-    <div class="w-full">
+    <div>
       <div v-if="hotComments.length" class="mt-4 text-[18px] font-semibold">最热评论</div>
       <div
         v-for="comment in hotComments"
         :key="comment.commentId"
-        class="relative my-4 flex h-16 w-full items-center border-b border-[#ccc]"
+        class="my-4 flex h-16 items-center border-b border-[#ccc]"
       >
         <!-- 评论人 -->
         <div
@@ -33,13 +33,13 @@
       </div>
     </div>
     <!-- 最新评论 -->
-    <div class="w-full">
+    <div>
       <div v-if="newComments.length" class="mt-4 text-[18px] font-semibold">最新评论</div>
       <div v-else class="mt-4 text-[18px] font-semibold">暂无评论</div>
       <div
         v-for="comment in newComments"
         :key="comment.commentId"
-        class="relative my-4 flex h-16 w-full items-center border-b border-[#ccc]"
+        class="my-4 flex h-16 items-center border-b border-[#ccc]"
       >
         <!-- 评论人 -->
         <div
@@ -54,7 +54,7 @@
             />
           </div>
           <div>
-            <div class="w-20 truncate text-sm" :title="comment.user.nickname">
+            <div class="w-24 truncate text-sm" :title="comment.user.nickname">
               {{ comment.user.nickname }}
             </div>
             <div class="text-[13px] text-[#666]">{{ comment.timeStr }}</div>

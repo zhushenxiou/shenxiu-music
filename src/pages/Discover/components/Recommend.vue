@@ -46,7 +46,7 @@ const playlists = ref<PlaylistType[]>([])
 
 async function getData() {
   isLoading.value = true
-  try{
+  try {
     const [bannersRes, playlistRes] = await Promise.all([bannerApi(), personalizedPlaylistApi()])
     banners.value = bannersRes.banners
     playlists.value = playlistRes.result
@@ -89,10 +89,8 @@ async function playNewSong(songId: number) {
   if (!store.playlist.some((item) => item.id === song.id)) {
     store.playlist = [...store.playlist, song]
   }
-  store.isPlaying = false
   // 定位到这首歌并播放
-  store.index = store.playlist.findIndex((item) => item.id === song.id)
-  store.updateCurSong()
+  store.playByIndex(store.playlist.findIndex((item) => item.id === song.id))
 }
 
 onMounted(() => {

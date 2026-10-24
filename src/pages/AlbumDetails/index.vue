@@ -115,9 +115,7 @@ function playAll() {
   if (songlist.value !== store.playlist) {
     store.playlist = songlist.value
   }
-  store.index = 0
-  store.isPlaying = false
-  store.updateCurSong()
+  store.playByIndex(0)
 }
 
 onMounted(() => {

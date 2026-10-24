@@ -34,6 +34,8 @@ export const usePlayerStore = defineStore('player', () => {
   // 歌词 格式：[{ time: 时间戳, lrc: '歌词内容', next: 下一句出现时间戳 }]
   const lyric = ref([{ time: 0, lrc: '暂无歌词', next: 100000 }])
   const isPlaying = ref(false)
+  /** 是否正在切歌/加载歌曲（请求 URL 与歌词阶段） */
+  const isLoading = ref(false)
   const curDuration = ref(0)
   const showPlaylist = ref(false)
   const showSongDetails = ref(false)
@@ -69,22 +71,56 @@ export const usePlayerStore = defineStore('player', () => {
     return lyricArr
   }
 
+  /** 加载请求序号：快速切歌时只让最后一次请求落地 */
+  let loadToken = 0
+
   // 更新当前播放歌曲信息
   const updateCurSong = async () => {
-    curSongInfo.value = playlist.value[index.value]
+    const song = playlist.value[index.value]
+    if (!song) return
 
-    // 获取歌曲播放URL
-    const [songUrlRes, lyricRes] = await Promise.all([
-      songUrlApi(curSongInfo.value.id),
-      lyricApi(curSongInfo.value.id),
-    ])
+    // 切歌时立刻归零进度，避免等待 URL 期间进度条/歌词仍停留在上一首
+    if (song.id !== curSongInfo.value.id) {
+      curDuration.value = 0
+    }
 
-    // 设置当前歌曲URL
-    curSongUrl.value = songUrlRes.data[0].url
+    curSongInfo.value = song
 
-    // // 获取并格式化歌词
-    const lyricStr = lyricRes.lrc.lyric
-    lyric.value = formatLyric(lyricStr)
+    const token = ++loadToken
+    isLoading.value = true
+    try {
+      // 获取歌曲播放URL
+      const [songUrlRes, lyricRes] = await Promise.all([songUrlApi(song.id), lyricApi(song.id)])
+
+      // 期间又切了歌，丢弃过期响应
+      if (token !== loadToken) return
+
+      // 设置当前歌曲URL
+      curSongUrl.value = songUrlRes.data[0].url
+
+      // 获取并格式化歌词
+      const lyricStr = lyricRes.lrc.lyric
+      lyric.value = formatLyric(lyricStr)
+    } finally {
+      if (token === loadToken) {
+        isLoading.value = false
+      }
+    }
+  }
+
+  // 按索引播放：目标就是当前歌曲（URL 不会变）时只恢复播放，
+  // 否则先暂停当前歌曲，再切换并加载新歌
+  const playByIndex = (i: number) => {
+    const target = playlist.value[i]
+    if (!target) return
+    if (target.id === curSongInfo.value.id && curSongUrl.value) {
+      index.value = i
+      isPlaying.value = true
+      return
+    }
+    isPlaying.value = false
+    index.value = i
+    updateCurSong()
   }
 
   // 3. 暴露状态和方法（组件中可访问）
@@ -95,9 +131,11 @@ export const usePlayerStore = defineStore('player', () => {
     curSongUrl,
     lyric,
     isPlaying,
+    isLoading,
     curDuration,
     showPlaylist,
     showSongDetails,
     updateCurSong,
+    playByIndex,
   }
 })

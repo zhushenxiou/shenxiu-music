@@ -17,9 +17,10 @@
       <div class="prev" @click="prevSong">
         <IconPrev />
       </div>
-      <!-- 播放/暂停 -->
+      <!-- 播放/暂停（加载中显示 loading） -->
       <div class="isPlay" id="isPlay" @click="togglePlay">
-        <IconPlay v-if="!store.isPlaying" />
+        <IconLoading v-if="isPlayLoading" class="animate-spin" />
+        <IconPlay v-else-if="!store.isPlaying" />
         <IconPause v-else />
       </div>
       <!-- 下一首 -->
@@ -52,8 +53,13 @@
     <!-- 播放音乐的核心组件 autoplay-->
     <audio
       ref="audioPlayer"
-      :src="store.curSongUrl"
+      :src="store.curSongUrl || undefined"
       @timeupdate="handleTimeupdate"
+      @loadstart="isAudioLoading = true"
+      @waiting="isAudioLoading = true"
+      @playing="isAudioLoading = false"
+      @canplay="isAudioLoading = false"
+      @error="isAudioLoading = false"
       :autoplay="store.isPlaying"
     ></audio>
   </div>
@@ -71,6 +77,7 @@ import IconCollect from '@/assets/icon/IconCollect.vue'
 import IconPrev from '@/assets/icon/IconPrev.vue'
 import IconPlay from '@/assets/icon/IconPlay.vue'
 import IconPause from '@/assets/icon/IconPause.vue'
+import IconLoading from '@/assets/icon/IconLoading.vue'
 import IconNext from '@/assets/icon/IconNext.vue'
 import IconVolume from '@/assets/icon/IconVolume.vue'
 import IconMute from '@/assets/icon/IconMute.vue'
@@ -79,6 +86,10 @@ const store = usePlayerStore()
 
 // 控制audio的Ref
 const audioPlayer = ref()
+// 音频缓冲中（loadstart/waiting 置位，playing/canplay/error 清除）
+const isAudioLoading = ref(false)
+// 播放按钮是否显示 loading：切歌请求期间或音频缓冲期间
+const isPlayLoading = computed(() => store.isLoading || isAudioLoading.value)
 // 循环模式 loop random cycle
 const loopMode = ref('loop')
 // 拖动进度条标志（防止 timeupdate 覆盖用户操作）
@@ -119,12 +130,10 @@ function togglePlay() {
     ElMessage.warning('当前无音乐播放')
     return
   }
+  // 切歌请求期间不响应，避免把即将被替换的上一首重新播出来
+  if (store.isLoading) return
+  // 只切换状态，audio 的实际播放/暂停由下方 watch 统一处理
   store.isPlaying = !store.isPlaying
-  if (store.isPlaying) {
-    audioPlayer.value.play()
-  } else {
-    audioPlayer.value.pause()
-  }
 }
 
 // 拖动进度条（松开滑块时触发）
@@ -144,25 +153,29 @@ function changeDuration(val: number) {
 
 // 上一首
 function prevSong() {
+  if (!store.playlist.length) return
+  let target: number
   // 顺序循环和单曲循环都是单位1
   if (loopMode.value == 'loop' || loopMode.value == 'cycle') {
     // 如果是第一首的上一首就是最后一首
-    store.index = store.index == 0 ? store.playlist.length - 1 : store.index - 1
-  } else if (loopMode.value == 'random') {
-    store.index = Math.floor(Math.random() * store.playlist.length)
+    target = store.index == 0 ? store.playlist.length - 1 : store.index - 1
+  } else {
+    target = Math.floor(Math.random() * store.playlist.length)
   }
-  store.updateCurSong()
+  store.playByIndex(target)
 }
 
 // 下一首
 function nextSong() {
+  if (!store.playlist.length) return
+  let target: number
   if (loopMode.value == 'loop' || loopMode.value == 'cycle') {
     // 如果是最后一首的下一首就是第一首
-    store.index = store.index == store.playlist.length - 1 ? 0 : store.index + 1
-  } else if (loopMode.value == 'random') {
-    store.index = Math.floor(Math.random() * store.playlist.length)
+    target = store.index == store.playlist.length - 1 ? 0 : store.index + 1
+  } else {
+    target = Math.floor(Math.random() * store.playlist.length)
   }
-  store.updateCurSong()
+  store.playByIndex(target)
 }
 
 // 监听切换歌曲
@@ -177,6 +190,27 @@ watch(
       store.isPlaying = true
     }
   },
+)
+
+// 监听播放状态：isPlaying 是全局唯一的播放开关，
+// 歌单、推荐、用户动态等页面只要修改它，就能真正驱动 audio 播放/暂停
+watch(
+  () => store.isPlaying,
+  (playing) => {
+    if (!audioPlayer.value) return
+    if (playing) {
+      // flush: 'post' 保证 src 已同步到 DOM 后再 play，避免先播到上一首
+      audioPlayer.value.play().catch(() => {
+        // 被浏览器自动播放策略拒绝时回滚状态，保持按钮与实际播放一致
+        isAudioLoading.value = false
+        store.isPlaying = false
+      })
+    } else {
+      audioPlayer.value.pause()
+      isAudioLoading.value = false
+    }
+  },
+  { flush: 'post' },
 )
 
 // 是否静音控制
@@ -241,12 +275,15 @@ function handleTimeupdate(e: Event) {
 
   // 当歌曲播放完毕后，并根据歌曲的循环方式进行操作
   if (e.target.ended && curTime.value == endTime.value) {
-    store.isPlaying = false
     if (loopMode.value == 'cycle') {
-      // 单曲循环自动下一首还是本首
+      // 单曲循环：保持播放状态，回到开头重新播放
       e.target.currentTime = 0
       store.curDuration = 0
+      e.target.play().catch(() => {
+        store.isPlaying = false
+      })
     } else {
+      store.isPlaying = false
       nextSong()
     }
   }

@@ -197,9 +197,7 @@ async function playEventSong(id: number | string) {
     }
     // 与 CSonglist 播放逻辑一致：设为播放列表第一首并播放
     store.playlist = [song]
-    store.isPlaying = false
-    store.index = 0
-    store.updateCurSong()
+    store.playByIndex(0)
   } catch {
     ElMessage.error('播放失败')
   } finally {

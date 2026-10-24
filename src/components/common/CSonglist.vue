@@ -72,22 +72,20 @@ function addIndex({ row, rowIndex }: { row: SongType; rowIndex: number }) {
 }
 
 /** 播放音乐 */
-async function playSong(row: SongType) {
+function playSong(row: SongType) {
   // 如果歌单已经变了，就改变歌单（引用比较，O(1) 不遍历数组）
   if (props.songlist !== store.playlist) {
     store.playlist = props.songlist
   }
-  // 如果之前有正在播放的歌曲，则先将其执行暂停操作再进行后续步骤
-  store.isPlaying = false
-  store.index = row.index!
-  store.updateCurSong()
+  // 由 store 统一处理“切歌先暂停、点当前歌曲只恢复播放”
+  store.playByIndex(row.index!)
 }
 
 // 跳转歌手详情
 function toSingerDetails(id: number) {
   router.push({
     name: 'singerDetails',
-    params: { id }
+    params: { id },
   })
 }
 
@@ -95,7 +93,7 @@ function toSingerDetails(id: number) {
 function toAlbumDetails(id: number) {
   router.push({
     name: 'albumDetails',
-    params: { id }
+    params: { id },
   })
 }
 

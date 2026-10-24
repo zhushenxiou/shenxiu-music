@@ -2,7 +2,13 @@
   <!-- 播放列表 -->
   <div class="playlist">
     <div class="amount">总{{ store.playlist.length || 0 }}首</div>
-    <el-table :data="store.playlist" stripe :row-class-name="addIndex" @row-click="playSong" empty-text="暂无歌曲">
+    <el-table
+      :data="store.playlist"
+      stripe
+      :row-class-name="addIndex"
+      @row-click="playSong"
+      empty-text="暂无歌曲"
+    >
       <el-table-column type="index" width="50" />
       <el-table-column prop="name" label="音乐标题">
         <template #default="scope">
@@ -37,11 +43,8 @@ function addIndex({ row, rowIndex }: { row: SongType; rowIndex: number }) {
 }
 
 function playSong(row: SongType) {
-  store.isPlaying = false
-  store.index = row.index!
-  store.updateCurSong()
+  store.playByIndex(row.index!)
 }
-
 </script>
 
 <style lang="less">

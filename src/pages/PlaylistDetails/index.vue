@@ -20,7 +20,7 @@
         </div>
         <!-- 作者信息 -->
         <div class="flex items-center mb-4">
-          <el-image :src="playlistDetails.creator.backgroundUrl" class="h-8 w-8 mr-2 rounded-lg"/>
+          <el-image :src="playlistDetails.creator.backgroundUrl" class="h-8 w-8 mr-2 rounded-lg" />
           <span
             class="text-blue-500 cursor-pointer mr-2"
             @click="toUserDetails(playlistDetails.creator.userId)"
@@ -167,9 +167,7 @@ async function playAll() {
   if (songlist.value != store.playlist) {
     store.playlist = songlist.value
   }
-  store.index = 0
-  store.isPlaying = false
-  store.updateCurSong()
+  store.playByIndex(0)
 }
 
 function toUserDetails(id: number) {
