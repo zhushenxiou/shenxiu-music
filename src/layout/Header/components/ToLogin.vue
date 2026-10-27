@@ -100,8 +100,11 @@ async function getAccountInfo() {
 }
 
 function toUserDetails() {
+  // 跳转当前登录用户自己的详情页（uid 由 getAccountInfo 写入）
+  if (!userStore.uid) return
   router.push({
-    name: 'myMusic',
+    name: 'userDetails',
+    params: { id: userStore.uid },
   })
 }
 

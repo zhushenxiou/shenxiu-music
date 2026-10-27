@@ -39,7 +39,12 @@ const mvs = ref<MVType[]>([])
 
 async function getSearchMV() {
   isLoading.value = true
-  const res = await searchApi(keywords.value, 1004, (pageInfo.curPage - 1) * 24, pageInfo.pageSize)
+  const res = await searchApi(
+    keywords.value,
+    1004,
+    (pageInfo.curPage - 1) * pageInfo.pageSize,
+    pageInfo.pageSize,
+  )
   const data = res as { result: { mvCount: number; mvs: MVType[] } }
   pageInfo.total = data.result.mvCount
   mvs.value = data.result.mvs

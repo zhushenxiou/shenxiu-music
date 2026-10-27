@@ -21,7 +21,7 @@
         <template #default="scope">
           <span>{{ scope.row.ar[0].name.slice(0, 8) }}</span>
           <!-- 有多个作者或者第一个作者名字超过8长度 用...代替 -->
-          <span v-if="scope.row.ar[1] || scope.row.ar[0].length > 8">...</span>
+          <span v-if="scope.row.ar[1] || scope.row.ar[0].name.length > 8">...</span>
         </template>
       </el-table-column>
     </el-table>
