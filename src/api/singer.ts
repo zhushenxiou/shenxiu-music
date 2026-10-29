@@ -13,7 +13,8 @@ export interface SingerDetailsResponse {
       mvSize: number
       briefDesc: string
     }
-    user: {
+    /** 当前用户对该歌手的关注状态；部分后端版本/未登录时不返回此字段 */
+    user?: {
       followed: boolean
     }
   }

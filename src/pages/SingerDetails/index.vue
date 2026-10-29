@@ -115,7 +115,8 @@ async function getData() {
   singerInfo.value = details.data.artist
   songlist.value = hotSongs.songs
   albums.value = albumRes.hotAlbums
-  subscribed.value = details.data.user.followed
+  // 该接口并非所有后端版本都返回 user，缺失时按未关注处理
+  subscribed.value = details.data.user?.followed ?? false
 
   isLoading.value = false
 
